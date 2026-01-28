@@ -1,0 +1,15 @@
+:root {
+    /*
+    Use websites such as
+    1. https://colorffy.com/contrast-checker?colors=000000-dbcc8f
+    2. https://coolors.co/contrast-checker/000000-dbcc8f
+
+    to get hex codes for the colors and calculate contrast with light & dark backgrounds
+    */
+
+    /* This would be either as a background with black text or vice versa */
+    --primary-accent-color: #dbcc8f;
+
+    /* This would be either as a background with white text or vice versa */
+    --secondary-accent-color: #846a6a;
+}
