@@ -1,223 +1,123 @@
-<x-mylayouts.layout-default title="Store">
+@extends('layouts.app')
 
-    @if ($product_data->isEmpty())
-        <x-core.products-empty />
-    @else
-        <section class="ftco-section bg-light">
-            <div class="container">
-                <div class="row">
-                    <div class="col-md-8 col-lg-10 order-md-last">
-                        <div class="row">
+@section('content')
 
-
-                            @foreach ($product_data as $data)
-                                <div class="col-sm-12 col-md-12 col-lg-4 ftco-animate d-flex">
-                                    <div class="product d-flex flex-column">
-                                        <a href="#" class="img-prod"><img class="img-fluid" src="{{ $data->getImage() }}"
-                                                alt="Colorlib Template">
-                                            <span class="status">50% Off</span>
-                                            <div class="overlay"></div>
-                                        </a>
-                                        <div class="text py-3 pb-4 px-3">
-                                            <div class="d-flex">
-                                                <div class="cat">
-                                                    <span>{{ $data->category }}</span>
-                                                </div>
-                                                <div class="rating">
-                                                    <p class="text-right mb-0">
-                                                        <a href="#"><span class="ion-ios-star-outline"></span></a>
-                                                        <a href="#"><span class="ion-ios-star-outline"></span></a>
-                                                        <a href="#"><span class="ion-ios-star-outline"></span></a>
-                                                        <a href="#"><span class="ion-ios-star-outline"></span></a>
-                                                        <a href="#"><span class="ion-ios-star-outline"></span></a>
-                                                    </p>
-                                                </div>
-                                            </div>
-                                            <h3><a href="{{ $data->getLink() }}">{{ $data->title }}</a></h3>
-                                            <div class="pricing">
-                                                {{-- <p class="price"><span class="mr-2 price-dc">$120.00</span> --}}
-                                                <span class="price-sale">${{ $data->getPrice() }}</span>
-                                                </p>
-                                            </div>
-                                            <p class="bottom-area d-flex px-3">
-                                                <a href="{{ route('cart.addfromstorepage', ['id' => $data->id]) }}"
-                                                    class="add-to-cart text-center py-2 mr-1"><span>Add to cart <i
-                                                            class="ion-ios-cart ml-1"></i></span></a>
-                                                <a href="{{ $data->getLink() }}" class="buy-now text-center py-2">Details<span><i
-                                                            class="ion-ios-information-circle ml-1 ml-1"></i></span></a>
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
-                            @endforeach
-
-
-                            @include('components.core.pagination-call', ['data' => $product_data])
-
-
+<div class="container-fluid page-header py-5">
+    <h1 class="text-center text-white display-6">Shop</h1>
+    <ol class="breadcrumb justify-content-center mb-0">
+        <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li>
+        <li class="breadcrumb-item active text-white">Shop</li>
+    </ol>
+</div>
+<div class="container-fluid fruite py-5">
+    <div class="container py-5">
+        <div class="row g-4">
+            <div class="col-lg-12">
+                <div class="row g-4">
+                    <div class="col-xl-3">
+                        <div class="input-group w-100 mx-auto d-flex">
+                            <input type="search" class="form-control p-3" placeholder="keywords" aria-describedby="search-icon-1">
+                            <span id="search-icon-1" class="input-group-text p-3"><i class="fa fa-search"></i></span>
                         </div>
-
-                        {{-- <div class="row mt-5">
-                            <div class="col text-center">
-                                <div class="block-27">
-                                    <ul>
-                                        <li><a href="#">&lt;</a></li>
-                                        <li class="active"><span>1</span></li>
-                                        <li><a href="#">2</a></li>
-                                        <li><a href="#">3</a></li>
-                                        <li><a href="#">4</a></li>
-                                        <li><a href="#">5</a></li>
-                                        <li><a href="#">&gt;</a></li>
+                    </div>
+                    <div class="col-6"></div>
+                    <div class="col-xl-3">
+                        <div class="bg-light ps-3 py-3 rounded d-flex justify-content-between mb-4">
+                            <label for="fruits">Default Sorting:</label>
+                            <select id="fruits" name="fruitlist" class="border-0 form-select-sm bg-light me-3" form="fruitform">
+                                <option value="volvo">Nothing</option>
+                                <option value="saab">Popularity</option>
+                                <option value="opel">Organic</option>
+                                <option value="audi">Fantastic</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="row g-4">
+                    <div class="col-lg-3">
+                        <div class="row g-4">
+                            <div class="col-lg-12">
+                                <div class="mb-3">
+                                    <h4>Categories</h4>
+                                    <ul class="list-unstyled fruite-categorie">
+                                        <li>
+                                            <div class="d-flex justify-content-between fruite-name">
+                                                <a href="#"><i class="fas fa-apple-alt me-2"></i>Apples</a>
+                                                <span>(3)</span>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div class="d-flex justify-content-between fruite-name">
+                                                <a href="#"><i class="fas fa-apple-alt me-2"></i>Oranges</a>
+                                                <span>(5)</span>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div class="d-flex justify-content-between fruite-name">
+                                                <a href="#"><i class="fas fa-apple-alt me-2"></i>Strawbery</a>
+                                                <span>(2)</span>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div class="d-flex justify-content-between fruite-name">
+                                                <a href="#"><i class="fas fa-apple-alt me-2"></i>Banana</a>
+                                                <span>(8)</span>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div class="d-flex justify-content-between fruite-name">
+                                                <a href="#"><i class="fas fa-apple-alt me-2"></i>Pumpkin</a>
+                                                <span>(5)</span>
+                                            </div>
+                                        </li>
                                     </ul>
                                 </div>
                             </div>
-                        </div> --}}
-
+                        </div>
                     </div>
+                    <div class="col-lg-9">
+                        <div class="row g-4 justify-content-center">
 
-                    <div class="col-md-4 col-lg-2">
-                        <div class="sidebar">
-                            <div class="sidebar-box-2">
-                                <h2 class="heading">Categories</h2>
-                                <div class="fancy-collapse-panel">
-                                    <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
-                                        <div class="panel panel-default">
-                                            <div class="panel-heading" role="tab" id="headingOne">
-                                                <h4 class="panel-title">
-                                                    <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne"
-                                                        aria-expanded="true" aria-controls="collapseOne">Men's Shoes
-                                                    </a>
-                                                </h4>
-                                            </div>
-                                            <div id="collapseOne" class="panel-collapse collapse" role="tabpanel"
-                                                aria-labelledby="headingOne">
-                                                <div class="panel-body">
-                                                    <ul>
-                                                        <li><a href="#">Sport</a></li>
-                                                        <li><a href="#">Casual</a></li>
-                                                        <li><a href="#">Running</a></li>
-                                                        <li><a href="#">Jordan</a></li>
-                                                        <li><a href="#">Soccer</a></li>
-                                                        <li><a href="#">Football</a></li>
-                                                        <li><a href="#">Lifestyle</a></li>
-                                                    </ul>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="panel panel-default">
-                                            <div class="panel-heading" role="tab" id="headingTwo">
-                                                <h4 class="panel-title">
-                                                    <a class="collapsed" data-toggle="collapse" data-parent="#accordion"
-                                                        href="#collapseTwo" aria-expanded="false"
-                                                        aria-controls="collapseTwo">Women's
-                                                        Shoes
-                                                    </a>
-                                                </h4>
-                                            </div>
-                                            <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel"
-                                                aria-labelledby="headingTwo">
-                                                <div class="panel-body">
-                                                    <ul>
-                                                        <li><a href="#">Sport</a></li>
-                                                        <li><a href="#">Casual</a></li>
-                                                        <li><a href="#">Running</a></li>
-                                                        <li><a href="#">Jordan</a></li>
-                                                        <li><a href="#">Soccer</a></li>
-                                                        <li><a href="#">Football</a></li>
-                                                        <li><a href="#">Lifestyle</a></li>
-                                                    </ul>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="panel panel-default">
-                                            <div class="panel-heading" role="tab" id="headingThree">
-                                                <h4 class="panel-title">
-                                                    <a class="collapsed" data-toggle="collapse" data-parent="#accordion"
-                                                        href="#collapseThree" aria-expanded="false"
-                                                        aria-controls="collapseThree">Accessories
-                                                    </a>
-                                                </h4>
-                                            </div>
-                                            <div id="collapseThree" class="panel-collapse collapse" role="tabpanel"
-                                                aria-labelledby="headingThree">
-                                                <div class="panel-body">
-                                                    <ul>
-                                                        <li><a href="#">Jeans</a></li>
-                                                        <li><a href="#">T-Shirt</a></li>
-                                                        <li><a href="#">Jacket</a></li>
-                                                        <li><a href="#">Shoes</a></li>
-                                                    </ul>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="panel panel-default">
-                                            <div class="panel-heading" role="tab" id="headingFour">
-                                                <h4 class="panel-title">
-                                                    <a class="collapsed" data-toggle="collapse" data-parent="#accordion"
-                                                        href="#collapseFour" aria-expanded="false"
-                                                        aria-controls="collapseThree">Clothing
-                                                    </a>
-                                                </h4>
-                                            </div>
-                                            <div id="collapseFour" class="panel-collapse collapse" role="tabpanel"
-                                                aria-labelledby="headingFour">
-                                                <div class="panel-body">
-                                                    <ul>
-                                                        <li><a href="#">Jeans</a></li>
-                                                        <li><a href="#">T-Shirt</a></li>
-                                                        <li><a href="#">Jacket</a></li>
-                                                        <li><a href="#">Shoes</a></li>
-                                                    </ul>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
+                            @if($product_data->isEmpty())
+                                <div class="col-12 text-center">
+                                    <h3>No Products Found</h3>
                                 </div>
-                            </div>
-                            <div class="sidebar-box-2">
-                                <h2 class="heading">Price Range</h2>
-                                <form method="post" class="colorlib-form-2">
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                            <div class="form-group">
-                                                <label for="guests">Price from:</label>
-                                                <div class="form-field">
-                                                    <i class="icon icon-arrow-down3"></i>
-                                                    <select name="people" id="people" class="form-control">
-                                                        <option value="#">1</option>
-                                                        <option value="#">200</option>
-                                                        <option value="#">300</option>
-                                                        <option value="#">400</option>
-                                                        <option value="#">1000</option>
-                                                    </select>
-                                                </div>
+                            @else
+                                @foreach ($product_data as $data)
+                                    <div class="col-md-6 col-lg-6 col-xl-4">
+                                        <div class="rounded position-relative fruite-item border border-secondary">
+                                            <div class="fruite-img">
+                                                <img src="{{ $data->getImage() }}" class="img-fluid w-100 rounded-top" alt="">
                                             </div>
-                                        </div>
-                                        <div class="col-md-12">
-                                            <div class="form-group">
-                                                <label for="guests">Price to:</label>
-                                                <div class="form-field">
-                                                    <i class="icon icon-arrow-down3"></i>
-                                                    <select name="people" id="people" class="form-control">
-                                                        <option value="#">2000</option>
-                                                        <option value="#">4000</option>
-                                                        <option value="#">6000</option>
-                                                        <option value="#">8000</option>
-                                                        <option value="#">10000</option>
-                                                    </select>
+                                            <div class="text-white bg-secondary px-3 py-1 rounded position-absolute" style="top: 10px; left: 10px;">
+                                                {{ $data->category ?? 'General' }}
+                                            </div>
+                                            <div class="p-4 border-top-0 rounded-bottom">
+                                                <h4>{{ $data->title }}</h4>
+                                                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit sed do eiusmod te incididunt</p>
+                                                <div class="d-flex justify-content-between flex-lg-wrap">
+                                                    <p class="text-dark fs-5 fw-bold mb-0">${{ $data->getPrice() }}</p>
+                                                    <a href="{{ route('cart.addfromstorepage', ['id' => $data->id]) }}" class="btn border border-secondary rounded-pill px-3 text-primary">
+                                                        <i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart
+                                                    </a>
+                                                </div>
+                                                <div class="text-center mt-3">
+                                                     <a href="{{ $data->getLink() }}" class="small text-muted">View Details</a>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                </form>
+                                @endforeach
+                            @endif
+
+                            <div class="col-12">
+                                @include('components.core.pagination-call', ['data' => $product_data])
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </section>
-    @endif
-
-
-
-</x-mylayouts.layout-default>
+        </div>
+    </div>
+</div>
+@endsection

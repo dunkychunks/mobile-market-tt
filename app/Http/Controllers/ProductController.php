@@ -24,7 +24,8 @@ class ProductController extends Controller
 
         //retrieves products from the Products table
 
-        $product_data = Product::withPrices()->get();
+        //$product_data = Product::withPrices()->get();
+        $product_data = Product::withPrices()->paginate(6);
 
         //pass data to the Products page to display
 
