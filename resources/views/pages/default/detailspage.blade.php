@@ -1,454 +1,199 @@
-<x-mylayouts.layout-default title="Product Details">
+@extends('layouts.app')
 
+@section('content')
 
-    <section class="ftco-section">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-5 mb-5 ftco-animate">
-                    <a href="{{ $data->getImage() }}" class="image-popup prod-img-bg"><img src="{{ $data->getImage() }}"
-                            class="img-fluid" alt="Colorlib Template"></a>
-                </div>
-                <div class="col-lg-7 product-details pl-md-5 ftco-animate">
-                    <h3>{{ $data->title }}</h3>
-                    <div class="rating d-flex">
-                        <p class="text-left mr-4">
-                            <a href="#" class="mr-2">5.0</a>
-                            <a href="#"><span class="ion-ios-star-outline"></span></a>
-                            <a href="#"><span class="ion-ios-star-outline"></span></a>
-                            <a href="#"><span class="ion-ios-star-outline"></span></a>
-                            <a href="#"><span class="ion-ios-star-outline"></span></a>
-                            <a href="#"><span class="ion-ios-star-outline"></span></a>
-                        </p>
-                        <p class="text-left mr-4">
-                            <a href="#" class="mr-2" style="color: #000;">100 <span style="color: #bbb;">Rating</span></a>
-                        </p>
-                        <p class="text-left mr-4">
-                            <a href="#" class="mr-2" style="color: #000;">500 <span style="color: #bbb;">Sold</span></a>
-                        </p>
-                        <p class="text-left">
-                            <a href="#" class="mr-2" style="color: #000;">{{ Str::ucfirst($data->category) }} <span
-                                    style="color: #bbb;">Category</span></a>
-                        </p>
-                    </div>
-                    <p class="price"><span>${{ $data->getPrice() }}</span></p>
-                    <div>
-                        {{ $data->short_description }}
+<div class="container-fluid page-header py-5">
+    <h1 class="text-center text-white display-6">Shop Detail</h1>
+    <ol class="breadcrumb justify-content-center mb-0">
+        <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li>
+        <li class="breadcrumb-item"><a href="{{ route('shop.index') }}">Shop</a></li>
+        <li class="breadcrumb-item active text-white">Detail</li>
+    </ol>
+</div>
+<div class="container-fluid py-5 mt-5">
+    <div class="container py-5">
+        <div class="row g-4 mb-5">
+            <div class="col-lg-8 col-xl-9">
+                <div class="row g-4">
+                    <div class="col-lg-6">
+                        <div class="border rounded">
+                            <a href="{{ $data->getImage() }}" target="_blank">
+                                <img src="{{ $data->getImage() }}" class="img-fluid rounded" alt="Image">
+                            </a>
+                        </div>
                     </div>
 
+                    <div class="col-lg-6">
+                        <h4 class="fw-bold mb-3">{{ $data->title }}</h4>
+                        <p class="mb-3">Category: {{ Str::ucfirst($data->category) }}</p>
+                        <h5 class="fw-bold mb-3">${{ $data->getPrice() }}</h5>
+                        <div class="d-flex mb-4">
+                            <i class="fa fa-star text-secondary"></i>
+                            <i class="fa fa-star text-secondary"></i>
+                            <i class="fa fa-star text-secondary"></i>
+                            <i class="fa fa-star text-secondary"></i>
+                            <i class="fa fa-star"></i>
+                        </div>
+                        <p class="mb-4">{{ $data->short_description }}</p>
 
-                    <form action="{{ route('cart.store') }}" method="POST">
-                        @csrf
-                        @method('PUT')
-
-                        <div class="row mt-4">
-                            <div class="w-100"></div>
-
-
-                            <div class="input-group col-md-6 d-flex mb-3 custom-inputs">
-                                <span class="input-group-btn mr-2">
-                                    <button type="button" class="quantity-left-minus btn" data-type="minus" data-field=""> <i
-                                            class="ion-ios-remove"></i>
-                                    </button>
-                                </span>
-
-                                <input type="number" id="quantity" name="quantity" class="quantity form-control input-number"
-                                    value="1" min="1" max="10">
-
-                                <span class="input-group-btn ml-2">
-                                    <button type="button" class="quantity-right-plus btn" data-type="plus" data-field=""> <i
-                                            class="ion-ios-add"></i>
-                                    </button>
-                                </span>
-                            </div>
-
+                        <form action="{{ route('cart.store') }}" method="POST">
+                            @csrf
+                            @method('PUT')
                             <input type="hidden" name="product_id" value="{{ $data->id }}">
 
+                            <div class="input-group quantity mb-5" style="width: 100px;">
+                                <div class="input-group-btn">
+                                    <button type="button" class="btn btn-sm btn-minus rounded-circle bg-light border">
+                                        <i class="fa fa-minus"></i>
+                                    </button>
+                                </div>
+                                <input type="text" name="quantity" class="form-control form-control-sm text-center border-0" value="1">
+                                <div class="input-group-btn">
+                                    <button type="button" class="btn btn-sm btn-plus rounded-circle bg-light border">
+                                        <i class="fa fa-plus"></i>
+                                    </button>
+                                </div>
+                            </div>
 
-                            <div class="w-100"></div>
-                            <div class="col-md-12">
-                                <p style="color: #000;">
-                                    Available: {{ $data->quantity }} in stock
-                                </p>
+                            <button type="submit" class="btn border border-secondary rounded-pill px-4 py-2 mb-4 text-primary">
+                                <i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart
+                            </button>
+                        </form>
+                    </div>
+
+                    <div class="col-lg-12">
+                        <nav>
+                            <div class="nav nav-tabs mb-3">
+                                <button class="nav-link active border-white border-bottom-0" type="button" role="tab"
+                                    id="nav-about-tab" data-bs-toggle="tab" data-bs-target="#nav-about"
+                                    aria-controls="nav-about" aria-selected="true">Description</button>
+                                <button class="nav-link border-white border-bottom-0" type="button" role="tab"
+                                    id="nav-mission-tab" data-bs-toggle="tab" data-bs-target="#nav-mission"
+                                    aria-controls="nav-mission" aria-selected="false">Reviews</button>
+                            </div>
+                        </nav>
+                        <div class="tab-content mb-5">
+                            <div class="tab-pane active" id="nav-about" role="tabpanel" aria-labelledby="nav-about-tab">
+                                <p>{{ $data->full_description ?? $data->short_description }}</p>
+                                <div class="px-2">
+                                    <div class="row g-4">
+                                        <div class="col-6">
+                                            <div class="row bg-light align-items-center text-center justify-content-center py-2">
+                                                <div class="col-6">
+                                                    <p class="mb-0">Weight</p>
+                                                </div>
+                                                <div class="col-6">
+                                                    <p class="mb-0">1 kg</p>
+                                                </div>
+                                            </div>
+                                            <div class="row text-center align-items-center justify-content-center py-2">
+                                                <div class="col-6">
+                                                    <p class="mb-0">Country of Origin</p>
+                                                </div>
+                                                <div class="col-6">
+                                                    <p class="mb-0">Agro Farm</p>
+                                                </div>
+                                            </div>
+                                            <div class="row bg-light text-center align-items-center justify-content-center py-2">
+                                                <div class="col-6">
+                                                    <p class="mb-0">Quality</p>
+                                                </div>
+                                                <div class="col-6">
+                                                    <p class="mb-0">Organic</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="tab-pane" id="nav-mission" role="tabpanel" aria-labelledby="nav-mission-tab">
+                                <div class="d-flex">
+                                    <img src="{{ asset('theme/img/avatar.jpg') }}" class="img-fluid rounded-circle p-3" style="width: 100px; height: 100px;" alt="">
+                                    <div class="">
+                                        <p class="mb-2" style="font-size: 14px;">April 12, 2024</p>
+                                        <div class="d-flex justify-content-between">
+                                            <h5>Jason Smith</h5>
+                                            <div class="d-flex mb-3">
+                                                <i class="fa fa-star text-secondary"></i>
+                                                <i class="fa fa-star text-secondary"></i>
+                                                <i class="fa fa-star text-secondary"></i>
+                                                <i class="fa fa-star text-secondary"></i>
+                                                <i class="fa fa-star"></i>
+                                            </div>
+                                        </div>
+                                        <p>The generated Lorem Ipsum is therefore always free from repetition injected humour, or non-characteristic words etc. Gulliver's Travels "It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                        <button class="btn btn-primary py-3 px-5 mr-2">Add to Cart</button>
-                        {{-- <p><a href="cart.html" class="btn btn-black py-3 px-5 mr-2">Add to Cart</a><a
-                                href="cart.html" class="btn btn-primary py-3 px-5">Buy now</a></p> --}}
-                    </form>
-
+                    </div>
                 </div>
             </div>
 
-
-
-
-            <div class="row mt-5">
-                <div class="col-md-12 nav-link-wrap">
-                    <div class="nav nav-pills d-flex text-center" id="v-pills-tab" role="tablist" aria-orientation="vertical">
-                        <a class="nav-link ftco-animate active mr-lg-1" id="v-pills-1-tab" data-toggle="pill" href="#v-pills-1"
-                            role="tab" aria-controls="v-pills-1" aria-selected="true">Description</a>
-
-                        <a class="nav-link ftco-animate mr-lg-1" id="v-pills-2-tab" data-toggle="pill" href="#v-pills-2"
-                            role="tab" aria-controls="v-pills-2" aria-selected="false">Manufacturer</a>
-
-                        <a class="nav-link ftco-animate" id="v-pills-3-tab" data-toggle="pill" href="#v-pills-3" role="tab"
-                            aria-controls="v-pills-3" aria-selected="false">Reviews</a>
-
-                    </div>
-                </div>
-                <div class="col-md-12 tab-wrap">
-
-                    <div class="tab-content bg-light" id="v-pills-tabContent">
-
-                        <div class="tab-pane fade show active" id="v-pills-1" role="tabpanel" aria-labelledby="day-1-tab">
-                            <div class="p-4">
-                                <h3 class="mb-4">{{ $data->title }}</h3>
-                                <p>{{ $data->short_description }}</p>
-                                <p>{{ $data->full_description }}</p>
-                                <p>
-                                    Available: {{ $data->quantity }} in stock
-                                    <br>
-                                    Category: {{ Str::ucfirst($data->category) }}
-                                </p>
-                            </div>
-                        </div>
-
-                        <div class="tab-pane fade" id="v-pills-2" role="tabpanel" aria-labelledby="v-pills-day-2-tab">
-                            <div class="p-4">
-                                <h3 class="mb-4">Manufactured By {{ Str::before($data->title, ' ') }}</h3>
-                                <p>{{ $data->short_description }}</p>
-                                <p>{{ $data->full_description }}</p>
-                            </div>
-                        </div>
-                        <div class="tab-pane fade" id="v-pills-3" role="tabpanel" aria-labelledby="v-pills-day-3-tab">
-                            <div class="row p-4">
-                                <div class="col-md-7">
-                                    <h3 class="mb-4">23 Reviews</h3>
-                                    <div class="review">
-                                        <div class="user-img"
-                                            style="background-image: url({{ asset('template_default/images/person_1.jpg') }})">
-                                        </div>
-                                        <div class="desc">
-                                            <h4>
-                                                <span class="text-left">Jacob Doe</span>
-                                                <span
-                                                    class="text-right">{{ \Carbon\Carbon::now()->subDays(rand(0, 2))->format('d F Y') }}
-                                                </span>
-                                            </h4>
-                                            <p class="star">
-                                                <span>
-                                                    <i class="ion-ios-star"></i>
-                                                    <i class="ion-ios-star"></i>
-                                                    <i class="ion-ios-star"></i>
-                                                    <i class="ion-ios-star"></i>
-                                                    <i class="ion-ios-star"></i>
-                                                </span>
-                                                <span class="text-right"><a href="#" class="reply"><i
-                                                            class="icon-reply"></i></a></span>
-                                            </p>
-                                            <p>When she reached the first hills of the Italic Mountains, she had a last
-                                                view back on the skyline of her hometown Bookmarksgrov</p>
-                                        </div>
+            <div class="col-lg-4 col-xl-3">
+                <div class="row g-4 fruite">
+                    <div class="col-lg-12">
+                        <div class="mb-3">
+                            <h4>Categories</h4>
+                            <ul class="list-unstyled fruite-categorie">
+                                <li>
+                                    <div class="d-flex justify-content-between fruite-name">
+                                        <a href="#"><i class="fas fa-apple-alt me-2"></i>Apples</a>
+                                        <span>(3)</span>
                                     </div>
-                                    <div class="review">
-                                        <div class="user-img"
-                                            style="background-image: url({{ asset('template_default/images/person_2.jpg') }})">
-                                        </div>
-                                        <div class="desc">
-                                            <h4>
-                                                <span class="text-left">Chris Johnson</span>
-                                                <span
-                                                    class="text-right">{{ \Carbon\Carbon::now()->subDays(rand(3, 5))->format('d F Y') }}
-                                                </span>
-                                            </h4>
-                                            <p class="star">
-                                                <span>
-                                                    <i class="ion-ios-star"></i>
-                                                    <i class="ion-ios-star"></i>
-                                                    <i class="ion-ios-star"></i>
-                                                    <i class="ion-ios-star"></i>
-                                                    <i class="ion-ios-star-outline"></i>
-                                                </span>
-                                                <span class="text-right"><a href="#" class="reply"><i
-                                                            class="icon-reply"></i></a></span>
-                                            </p>
-                                            <p>When she reached the first hills of the Italic Mountains, she had a last
-                                                view back on the skyline of her hometown Bookmarksgrov</p>
-                                        </div>
+                                </li>
+                                <li>
+                                    <div class="d-flex justify-content-between fruite-name">
+                                        <a href="#"><i class="fas fa-apple-alt me-2"></i>Oranges</a>
+                                        <span>(5)</span>
                                     </div>
-                                    <div class="review">
-                                        <div class="user-img"
-                                            style="background-image: url('{{ asset('template_default/images/person_3.jpg') }}')">
-                                        </div>
-                                        <div class="desc">
-                                            <h4>
-                                                <span class="text-left">William Smith</span>
-                                                <span
-                                                    class="text-right">{{ \Carbon\Carbon::now()->subDays(rand(6, 7))->format('d F Y') }}
-                                                </span>
-                                            </h4>
-                                            <p class="star">
-                                                <span>
-                                                    <i class="ion-ios-star"></i>
-                                                    <i class="ion-ios-star"></i>
-                                                    <i class="ion-ios-star"></i>
-                                                    <i class="ion-ios-star-outline"></i>
-                                                    <i class="ion-ios-star-outline"></i>
-                                                </span>
-                                                <span class="text-right"><a href="#" class="reply"><i
-                                                            class="icon-reply"></i></a></span>
-                                            </p>
-                                            <p>When she reached the first hills of the Italic Mountains, she had a last
-                                                view back on the skyline of her hometown Bookmarksgrov</p>
-                                        </div>
+                                </li>
+                                <li>
+                                    <div class="d-flex justify-content-between fruite-name">
+                                        <a href="#"><i class="fas fa-apple-alt me-2"></i>Banana</a>
+                                        <span>(8)</span>
                                     </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="rating-wrap">
-                                        <h3 class="mb-4">Give a Review</h3>
-                                        <p class="star">
-                                            <span>
-                                                <i class="ion-ios-star"></i>
-                                                <i class="ion-ios-star"></i>
-                                                <i class="ion-ios-star"></i>
-                                                <i class="ion-ios-star"></i>
-                                                <i class="ion-ios-star"></i>
-                                                (57%)
-                                            </span>
-                                            <span>20 Reviews</span>
-                                        </p>
-                                        <p class="star">
-                                            <span>
-                                                <i class="ion-ios-star"></i>
-                                                <i class="ion-ios-star"></i>
-                                                <i class="ion-ios-star"></i>
-                                                <i class="ion-ios-star"></i>
-                                                <i class="ion-ios-star-outline"></i>
-                                                (29%)
-                                            </span>
-                                            <span>10 Reviews</span>
-                                        </p>
-                                        <p class="star">
-                                            <span>
-                                                <i class="ion-ios-star"></i>
-                                                <i class="ion-ios-star"></i>
-                                                <i class="ion-ios-star"></i>
-                                                <i class="ion-ios-star-outline"></i>
-                                                <i class="ion-ios-star-outline"></i>
-                                                (14%)
-                                            </span>
-                                            <span>5 Reviews</span>
-                                        </p>
-                                        <p class="star">
-                                            <span>
-                                                <i class="ion-ios-star"></i>
-                                                <i class="ion-ios-star"></i>
-                                                <i class="ion-ios-star-outline"></i>
-                                                <i class="ion-ios-star-outline"></i>
-                                                <i class="ion-ios-star-outline"></i>
-                                                ( 0%)
-                                            </span>
-                                            <span>0 Reviews</span>
-                                        </p>
-                                        <p class="star">
-                                            <span>
-                                                <i class="ion-ios-star"></i>
-                                                <i class="ion-ios-star-outline"></i>
-                                                <i class="ion-ios-star-outline"></i>
-                                                <i class="ion-ios-star-outline"></i>
-                                                <i class="ion-ios-star-outline"></i>
-                                                ( 0%)
-                                            </span>
-                                            <span>0 Reviews</span>
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
+                                </li>
+                            </ul>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </section>
 
-
-
-
-    {{-- Recommended Products --}}
-    <section class="ftco-section bg-light">
-        <div class="container">
-            <div class="row justify-content-center mb-3 pb-3">
-                <div class="col-md-12 heading-section text-center ftco-animate">
-                    <h2 class="mb-4">Ralated Products</h2>
-                    <p>Far far away, behind the word mountains, far from the countries Vokalia and Consonantia</p>
+        <h1 class="fw-bold mb-0">Related products</h1>
+        <div class="vesitable">
+            <div class="owl-carousel vegetable-carousel justify-content-center">
+                <div class="border border-primary rounded position-relative vesitable-item">
+                    <div class="vesitable-img">
+                        <img src="{{ asset('theme/img/vegetable-item-6.jpg') }}" class="img-fluid w-100 rounded-top" alt="">
+                    </div>
+                    <div class="text-white bg-primary px-3 py-1 rounded position-absolute" style="top: 10px; right: 10px;">Vegetable</div>
+                    <div class="p-4 rounded-bottom">
+                        <h4>Parsely</h4>
+                        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit sed do eiusmod te incididunt</p>
+                        <div class="d-flex justify-content-between flex-lg-wrap">
+                            <p class="text-dark fs-5 fw-bold mb-0">$4.99 / kg</p>
+                            <a href="#" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="border border-primary rounded position-relative vesitable-item">
+                    <div class="vesitable-img">
+                        <img src="{{ asset('theme/img/vegetable-item-1.jpg') }}" class="img-fluid w-100 rounded-top" alt="">
+                    </div>
+                    <div class="text-white bg-primary px-3 py-1 rounded position-absolute" style="top: 10px; right: 10px;">Vegetable</div>
+                    <div class="p-4 rounded-bottom">
+                        <h4>Parsely</h4>
+                        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit sed do eiusmod te incididunt</p>
+                        <div class="d-flex justify-content-between flex-lg-wrap">
+                            <p class="text-dark fs-5 fw-bold mb-0">$4.99 / kg</p>
+                            <a href="#" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart</a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="container">
-            <div class="row">
-
-
-                <div class="col-sm-12 col-md-12 col-lg-3 ftco-animate d-flex fadeInUp ftco-animated">
-                    <div class="product d-flex flex-column">
-                        <a href="#" class="img-prod"><img class="img-fluid"
-                                src="http://localhost:8000/storage/images/products/iphone1-4.jpg" alt="Colorlib Template">
-                            <span class="status">50% Off</span>
-                            <div class="overlay"></div>
-                        </a>
-                        <div class="text py-3 pb-4 px-3">
-                            <div class="d-flex">
-                                <div class="cat">
-                                    <span>gold</span>
-                                </div>
-                                <div class="rating">
-                                    <p class="text-right mb-0">
-                                        <a href="#"><span class="ion-ios-star-outline"></span></a>
-                                        <a href="#"><span class="ion-ios-star-outline"></span></a>
-                                        <a href="#"><span class="ion-ios-star-outline"></span></a>
-                                        <a href="#"><span class="ion-ios-star-outline"></span></a>
-                                        <a href="#"><span class="ion-ios-star-outline"></span></a>
-                                    </p>
-                                </div>
-                            </div>
-                            <h3><a href="http://localhost:8000/details/1">Iure qui debitis quia autem ut</a></h3>
-                            <div class="pricing">
-
-                                <span class="price-sale">$379.00</span>
-                                <p></p>
-                            </div>
-                            <p class="bottom-area d-flex px-3">
-                                <a href="http://localhost:8000/cart/add/1" class="add-to-cart text-center py-2 mr-1"><span>Add
-                                        to cart <i class="ion-ios-add ml-1"></i></span></a>
-                                <a href="http://localhost:8000/details/1" class="buy-now text-center py-2">Details<span><i
-                                            class="ion-ios-cart ml-1"></i></span></a>
-                            </p>
-                        </div>
-                    </div>
-                </div>
-
-
-                <div class="col-sm-12 col-md-12 col-lg-3 ftco-animate d-flex fadeInUp ftco-animated">
-                    <div class="product d-flex flex-column">
-                        <a href="#" class="img-prod"><img class="img-fluid"
-                                src="http://localhost:8000/storage/images/products/iphone1-4.jpg" alt="Colorlib Template">
-                            <span class="status">50% Off</span>
-                            <div class="overlay"></div>
-                        </a>
-                        <div class="text py-3 pb-4 px-3">
-                            <div class="d-flex">
-                                <div class="cat">
-                                    <span>gold</span>
-                                </div>
-                                <div class="rating">
-                                    <p class="text-right mb-0">
-                                        <a href="#"><span class="ion-ios-star-outline"></span></a>
-                                        <a href="#"><span class="ion-ios-star-outline"></span></a>
-                                        <a href="#"><span class="ion-ios-star-outline"></span></a>
-                                        <a href="#"><span class="ion-ios-star-outline"></span></a>
-                                        <a href="#"><span class="ion-ios-star-outline"></span></a>
-                                    </p>
-                                </div>
-                            </div>
-                            <h3><a href="http://localhost:8000/details/1">Iure qui debitis quia autem ut</a></h3>
-                            <div class="pricing">
-
-                                <span class="price-sale">$379.00</span>
-                                <p></p>
-                            </div>
-                            <p class="bottom-area d-flex px-3">
-                                <a href="http://localhost:8000/cart/add/1" class="add-to-cart text-center py-2 mr-1"><span>Add
-                                        to cart <i class="ion-ios-add ml-1"></i></span></a>
-                                <a href="http://localhost:8000/details/1" class="buy-now text-center py-2">Details<span><i
-                                            class="ion-ios-cart ml-1"></i></span></a>
-                            </p>
-                        </div>
-                    </div>
-                </div>
-
-
-                <div class="col-sm-12 col-md-12 col-lg-3 ftco-animate d-flex fadeInUp ftco-animated">
-                    <div class="product d-flex flex-column">
-                        <a href="#" class="img-prod"><img class="img-fluid"
-                                src="http://localhost:8000/storage/images/products/iphone1-4.jpg" alt="Colorlib Template">
-                            <span class="status">50% Off</span>
-                            <div class="overlay"></div>
-                        </a>
-                        <div class="text py-3 pb-4 px-3">
-                            <div class="d-flex">
-                                <div class="cat">
-                                    <span>gold</span>
-                                </div>
-                                <div class="rating">
-                                    <p class="text-right mb-0">
-                                        <a href="#"><span class="ion-ios-star-outline"></span></a>
-                                        <a href="#"><span class="ion-ios-star-outline"></span></a>
-                                        <a href="#"><span class="ion-ios-star-outline"></span></a>
-                                        <a href="#"><span class="ion-ios-star-outline"></span></a>
-                                        <a href="#"><span class="ion-ios-star-outline"></span></a>
-                                    </p>
-                                </div>
-                            </div>
-                            <h3><a href="http://localhost:8000/details/1">Iure qui debitis quia autem ut</a></h3>
-                            <div class="pricing">
-
-                                <span class="price-sale">$379.00</span>
-                                <p></p>
-                            </div>
-                            <p class="bottom-area d-flex px-3">
-                                <a href="http://localhost:8000/cart/add/1" class="add-to-cart text-center py-2 mr-1"><span>Add
-                                        to cart <i class="ion-ios-add ml-1"></i></span></a>
-                                <a href="http://localhost:8000/details/1" class="buy-now text-center py-2">Details<span><i
-                                            class="ion-ios-cart ml-1"></i></span></a>
-                            </p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-sm-12 col-md-12 col-lg-3 ftco-animate d-flex fadeInUp ftco-animated">
-                    <div class="product d-flex flex-column">
-                        <a href="#" class="img-prod"><img class="img-fluid"
-                                src="http://localhost:8000/storage/images/products/iphone1-4.jpg" alt="Colorlib Template">
-                            <span class="status">50% Off</span>
-                            <div class="overlay"></div>
-                        </a>
-                        <div class="text py-3 pb-4 px-3">
-                            <div class="d-flex">
-                                <div class="cat">
-                                    <span>gold</span>
-                                </div>
-                                <div class="rating">
-                                    <p class="text-right mb-0">
-                                        <a href="#"><span class="ion-ios-star-outline"></span></a>
-                                        <a href="#"><span class="ion-ios-star-outline"></span></a>
-                                        <a href="#"><span class="ion-ios-star-outline"></span></a>
-                                        <a href="#"><span class="ion-ios-star-outline"></span></a>
-                                        <a href="#"><span class="ion-ios-star-outline"></span></a>
-                                    </p>
-                                </div>
-                            </div>
-                            <h3><a href="http://localhost:8000/details/1">Iure qui debitis quia autem ut</a></h3>
-                            <div class="pricing">
-
-                                <span class="price-sale">$379.00</span>
-                                <p></p>
-                            </div>
-                            <p class="bottom-area d-flex px-3">
-                                <a href="http://localhost:8000/cart/add/1" class="add-to-cart text-center py-2 mr-1"><span>Add
-                                        to cart <i class="ion-ios-add ml-1"></i></span></a>
-                                <a href="http://localhost:8000/details/1" class="buy-now text-center py-2">Details<span><i
-                                            class="ion-ios-cart ml-1"></i></span></a>
-                            </p>
-                        </div>
-                    </div>
-                </div>
-
-
-
-            </div>
-        </div>
-    </section>
-    {{-- Recommended Products --}}
-
-
-
-</x-mylayouts.layout-default>
+    </div>
+</div>
+@endsection
