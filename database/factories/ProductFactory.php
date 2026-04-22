@@ -18,17 +18,22 @@ class ProductFactory extends Factory
      */
     public function definition(): array
     {
-        $categories = ['white', 'black', 'silver', 'gold'];
+        // Updated categories to match a Trinidadian Fresh Market context
+        $categories = ['fruits', 'vegetables', 'root-crops', 'herbs'];
 
         return [
-            'title' => Str::ucfirst(fake()->unique()->words(6, true)),
-            'short_description' => fake()->text(200),
-            'full_description' => fake()->text(500),
-            'price' => fake()->numberBetween(300, 500),
-            'quantity' => 50,
+            // Generates a shorter, more realistic product name (e.g., "Fresh Organic Mango")
+            'title' => Str::ucfirst(fake()->unique()->words(3, true)),
+            'short_description' => fake()->sentence(10),
+            'full_description' => fake()->paragraph(3),
+
+            // Updated price range to be more realistic for local produce (e.g., $10 to $50)
+            'price' => fake()->numberBetween(10, 50),
+
+            'quantity' => fake()->numberBetween(10, 100),
             'image_path' => '/images/products/',
-            'image_name' => $this->randomImage(),
-            'category' => $categories[fake()->numberBetween(0, sizeof($categories) - 1)],
+            'image_name' => $this->randomImage(), // Picks your new fruit filenames automatically
+            'category' => $categories[fake()->numberBetween(0, count($categories) - 1)],
             'classification' => 'default',
             'created_at' => fake()->dateTimeBetween(now()->subMonths(3), now()),
         ];

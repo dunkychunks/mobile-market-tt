@@ -12,6 +12,6 @@ class AppSeeder extends Seeder
      */
     public function run(): void
     {
-        Product::factory(12)->create();
+        Product::factory(69)->create();
     }
 }

@@ -86,6 +86,7 @@
                                     <i class="fas fa-user fa-2x"></i> <span class="d-none d-md-inline">{{ Auth::user()->name }}</span>
                                 </a>
                                 <div class="dropdown-menu m-0 bg-secondary rounded-0">
+                                    <a class="dropdown-item" href="/admin">Admin Dashboard</a>
                                     <a class="dropdown-item" href="{{ route('cart.index') }}">My Cart</a>
                                     <a class="dropdown-item" href="{{ route('logout') }}"
                                        onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
