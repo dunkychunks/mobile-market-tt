@@ -15,6 +15,11 @@ class UpdateUserTier
     public function handle(OrderPaid $event): void
     {
         $user = $event->order->user;
+
+        if (is_null($user)) {
+            return;
+        }
+
         $totalSpending = $user->orders()->where('payment_status', 'paid')->sum('total');
 
         $newTier = Tier::where('spending_range', '<=', $totalSpending)
