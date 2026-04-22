@@ -2,24 +2,28 @@
 
 namespace App\Listeners;
 
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Queue\InteractsWithQueue;
+use App\Events\OrderPaid;
+use App\Models\tier\Tier;
 
 class UpdateUserTier
 {
-    /**
-     * Create the event listener.
-     */
     public function __construct()
     {
         //
     }
 
-    /**
-     * Handle the event.
-     */
-    public function handle(object $event): void
+    public function handle(OrderPaid $event): void
     {
-        //
+        $user = $event->order->user;
+        $totalSpending = $user->orders()->where('payment_status', 'paid')->sum('total');
+
+        $newTier = Tier::where('spending_range', '<=', $totalSpending)
+            ->orderBy('spending_range', 'desc')
+            ->first();
+
+        if ($newTier && $user->tier_id !== $newTier->id) {
+            $user->tier_id = $newTier->id;
+            $user->save();
+        }
     }
 }
