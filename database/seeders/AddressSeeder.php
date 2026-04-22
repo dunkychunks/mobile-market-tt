@@ -37,7 +37,7 @@ class AddressSeeder extends Seeder
                 'first_name' => 'Jane',
                 'last_name' => 'Doe',
                 'email' => 'janedoe@mail.com',
-                'contact' => '123-4567',
+                'contact' => '234-5678',
                 'line_1' => 'Building #1, Street #1',
                 'line_2' => null,
                 'city' => 'Random City Name',

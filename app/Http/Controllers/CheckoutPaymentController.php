@@ -4,51 +4,59 @@ namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Auth;
 use App\Models\Order;
+use App\Models\OrderProduct;
 use App\Helpers\ShippingHelper;
 use App\Helpers\StripeCheckout;
 
 class CheckoutPaymentController extends Controller
 {
-
-
     /**
-     * Undocumented function
+     * Coordinates the checkout process, bridging the shopping cart,
+     * the local database, and the external payment gateway.
      *
-     * @param [type] $payment
-     * @return void
+     * @param string $payment
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function index($payment)
     {
-         // Get groups - check if user is authenticated, which group they belong to, no group automatic assigned to group 1
-        $group_ids = Auth::check() ? Auth::user()->getGroups() : [1];
-
-        // Get user - gets current user and stores in variable - the auth facade fetches the user model
         $user = Auth::user();
-
-        // Create variables
         $shipping_helper = new ShippingHelper();
         $stripe_checkout = new StripeCheckout();
         $order = new Order();
         $insert_data = [];
         $completed = false;
 
-        // Get products - gets all prodcts user added to cart to determine if there is anything to checkout
-         $cart_data = $user->products()->withPrices()->get();
+        // Retrieve cart items and their current prices
+        $cart_data = $user->products()->withPrices()->get();
 
-        // Check if cart is empty - if cart is empty go back o cart page since there is nothing to checkout
-             if ($cart_data->isEmpty()) {
+        // Prevent processing of empty carts
+        if ($cart_data->isEmpty()) {
             return redirect()->route('cart.index')->with('message', 'Your cart is empty');
         }
-        
-        // Get Subtotal
+
         $cart_data->calculateSubtotal();
 
-        // Determine payment
+        // Route logic based on the selected payment provider
         switch ($payment) {
             case 'stripe':
-                # code...
+                // Initialize the external API handshake
+                $stripe_checkout->startCheckoutSession();
+                $stripe_checkout->addEmail($user->email);
+                $stripe_checkout->addProducts($cart_data);
+                $stripe_checkout->addPointsCoupon();
+                $stripe_checkout->enablePromoCodes();
+                $stripe_checkout->addShippingOptions($shipping_helper->getGroupShippingOptions());
+
+                // Finalize the session generation on Stripe's servers
+                $stripe_checkout->createSession();
+
+                // Retrieve the generated session token to link our local record to Stripe
+                $insert_data = $stripe_checkout->getOrderCreateData();
+                $completed = true;
                 break;
+
             default:
+                // Fallback for development testing
                 $insert_data = [
                     'payment_provider' => 'testing',
                     'payment_id' => 'testing',
@@ -57,15 +65,43 @@ class CheckoutPaymentController extends Controller
                 break;
         }
 
-        // Validate
         if (!$completed || empty($insert_data)) {
             dd('Payment is incomplete or checkout is missing');
         }
 
-        // Create order details
+        // Database Persistence: Save the primary order details
+        $order->user_id = $user->id;
+        $order->order_no = 'MMTT-' . strtoupper(uniqid()); // Generate unique order reference
+        $order->subtotal = $cart_data->getSubtotal();
+        $order->total = $cart_data->getTotal();
+        $order->payment_provider = $insert_data['payment_provider'];
+        $order->payment_id = $insert_data['payment_id']; // The 'cs_test_...' string
+        $order->shipping_id = 1;
+        $order->shipping_address_id = 1;
+        $order->billing_address_id = 1;
+        $order->payment_status = 'unpaid'; // Set initial state pending confirmation
+        $order->save();
 
-        // Create order details
+        // Database Persistence: Save individual line items mapped to the order
+        $records = [];
+        foreach ($cart_data as $data) {
+            array_push($records, new OrderProduct([
+                'product_id' => $data->id,
+                'user_id' => $user->id,
+                'price' => $data->getPrice(),
+                'quantity' => $data->pivot->quantity
+            ]));
+        }
+        $order->order_products()->saveMany($records);
 
-        // Redirect
+        // Clear the user's cart now that the order has been successfully staged
+        $user->products()->detach();
+
+        // Redirect the user to finalize the transaction
+        if ($payment == 'stripe') {
+            return redirect($stripe_checkout->getUrl());
+        }
+
+        return redirect()->route('checkout.success', ['id' => $order->id])->with('success', 'Payment was successful during testing');
     }
 }
