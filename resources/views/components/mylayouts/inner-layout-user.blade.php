@@ -1,7 +1,7 @@
 <style>
     .user-layout-area2 {
         border-radius: 5px;
-        min-height: 800px;
+        min-height: 300px;
     }
 
     .layout-outer-left {
@@ -10,7 +10,7 @@
 
     .user-layout-left,
     .user-layout-right {
-        padding: 5rem 0rem;
+        padding: 2rem 0rem;
     }
 
     @media (max-width: 767px) {

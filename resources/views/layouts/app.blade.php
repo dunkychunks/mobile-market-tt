@@ -30,6 +30,9 @@
             .page-header { padding-top: 1rem !important; padding-bottom: 1rem !important; }
             .page-header h1 { font-size: 1.5rem !important; }
         }
+        /* reduce main content vertical padding — py-5 (3rem) → 1.5rem */
+        .container-fluid.py-5 { padding-top: 1.5rem !important; padding-bottom: 1.5rem !important; }
+        .container-fluid.py-5 > .container.py-5 { padding-top: 1rem !important; padding-bottom: 1rem !important; }
         /*
          * The Fruitables theme sets .pagination { display: inline-block; } which
          * collapses Bootstrap's flex layout and causes page buttons to stack vertically.
