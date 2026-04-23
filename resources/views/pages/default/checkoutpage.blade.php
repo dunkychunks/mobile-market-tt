@@ -1,5 +1,7 @@
 @extends('layouts.app')
 
+@section('title', 'MMTT | Checkout')
+
 @section('content')
 
 <div class="container-fluid page-header py-5">

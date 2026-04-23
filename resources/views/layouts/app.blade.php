@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>{{ config('app.name', 'Mobile Market TT') }}</title>
+    <title>@yield('title', config('app.name'))</title>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
@@ -35,9 +35,9 @@
                     <small class="me-3"><i class="fas fa-envelope me-2 text-secondary"></i><a href="#" class="text-white">info@mobilemarket.tt</a></small>
                 </div>
                 <div class="top-link pe-2">
-                    <a href="#" class="text-white"><small class="text-white mx-2">Privacy Policy</small>/</a>
-                    <a href="#" class="text-white"><small class="text-white mx-2">Terms of Use</small>/</a>
-                    <a href="#" class="text-white"><small class="text-white ms-2">Sales and Refunds</small></a>
+                    <a href="{{ route('privacy') }}" class="text-white"><small class="text-white mx-2">Privacy Policy</small>/</a>
+                    <a href="{{ route('terms') }}" class="text-white"><small class="text-white mx-2">Terms of Use</small>/</a>
+                    <a href="{{ route('terms') }}" class="text-white"><small class="text-white ms-2">Sales and Refunds</small></a>
                 </div>
             </div>
         </div>
@@ -58,7 +58,7 @@
                                 <a href="{{ route('checkout.index') }}" class="dropdown-item">Checkout</a>
                             </div>
                         </div>
-                        <a href="#" class="nav-item nav-link">Contact</a>
+                        <a href="{{ route('contact') }}" class="nav-item nav-link {{ Request::is('contact') ? 'active' : '' }}">Contact</a>
                     </div>
                     <div class="d-flex m-3 me-0">
                         <button class="btn-search btn border border-secondary btn-md-square rounded-circle bg-white me-4" data-bs-toggle="modal" data-bs-target="#searchModal"><i class="fas fa-search text-primary"></i></button>
@@ -86,7 +86,12 @@
                                     <i class="fas fa-user fa-2x"></i> <span class="d-none d-md-inline">{{ Auth::user()->name }}</span>
                                 </a>
                                 <div class="dropdown-menu m-0 bg-secondary rounded-0">
-                                    <a class="dropdown-item" href="/admin">Admin Dashboard</a>
+                                    @if(Auth::user()->role === 'admin')
+                                        <a class="dropdown-item" href="/admin">Admin Dashboard</a>
+                                    @endif
+                                    <a class="dropdown-item" href="{{ route('user.profile') }}">My Profile</a>
+                                    <a class="dropdown-item" href="{{ route('user.tiers.index') }}">My Rewards</a>
+                                    <a class="dropdown-item" href="{{ route('user.orders.index') }}">Order History</a>
                                     <a class="dropdown-item" href="{{ route('cart.index') }}">My Cart</a>
                                     <a class="dropdown-item" href="{{ route('logout') }}"
                                        onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
@@ -111,10 +116,12 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body d-flex align-items-center">
-                    <div class="input-group w-75 mx-auto d-flex">
-                        <input type="search" class="form-control p-3" placeholder="keywords" aria-describedby="search-icon-1">
-                        <span id="search-icon-1" class="input-group-text p-3"><i class="fa fa-search"></i></span>
-                    </div>
+                    <form action="{{ route('search') }}" method="GET" class="w-75 mx-auto">
+                        <div class="input-group d-flex">
+                            <input type="text" name="q" class="form-control p-3" placeholder="Search products..." value="{{ request('q') }}" aria-describedby="search-icon-1">
+                            <button type="submit" id="search-icon-1" class="input-group-text p-3 btn btn-primary"><i class="fa fa-search"></i></button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
@@ -163,21 +170,21 @@
                 <div class="col-lg-3 col-md-6">
                     <div class="d-flex flex-column text-start footer-item">
                         <h4 class="text-light mb-3">Shop Info</h4>
-                        <a class="btn-link" href="">About Us</a>
-                        <a class="btn-link" href="">Contact Us</a>
-                        <a class="btn-link" href="">Privacy Policy</a>
-                        <a class="btn-link" href="">Terms & Condition</a>
-                        <a class="btn-link" href="">Return Policy</a>
+                        <a class="btn-link" href="{{ route('about') }}">About Us</a>
+                        <a class="btn-link" href="{{ route('contact') }}">Contact Us</a>
+                        <a class="btn-link" href="{{ route('privacy') }}">Privacy Policy</a>
+                        <a class="btn-link" href="{{ route('terms') }}">Terms & Condition</a>
+                        <a class="btn-link" href="{{ route('terms') }}">Return Policy</a>
                     </div>
                 </div>
                 <div class="col-lg-3 col-md-6">
                     <div class="d-flex flex-column text-start footer-item">
                         <h4 class="text-light mb-3">Account</h4>
                         <a class="btn-link" href="{{ route('login') }}">My Account</a>
-                        <a class="btn-link" href="{{ route('shop.index') }}">Shop Details</a>
+                        <a class="btn-link" href="{{ route('shop.index') }}">Shop</a>
                         <a class="btn-link" href="{{ route('cart.index') }}">Shopping Cart</a>
-                        <a class="btn-link" href="">Wishlist</a>
-                        <a class="btn-link" href="">Order History</a>
+                        <a class="btn-link" href="{{ route('user.tiers.index') }}">My Rewards</a>
+                        <a class="btn-link" href="{{ route('user.orders.index') }}">Order History</a>
                     </div>
                 </div>
                 <div class="col-lg-3 col-md-6">
@@ -214,6 +221,7 @@
     <script src="{{ asset('theme/lib/owlcarousel/owl.carousel.min.js') }}"></script>
 
     <script src="{{ asset('theme/js/main.js') }}"></script>
+    @flasher_render
 </body>
 
 </html>

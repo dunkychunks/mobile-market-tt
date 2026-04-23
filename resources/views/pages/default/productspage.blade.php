@@ -1,5 +1,7 @@
 @extends('layouts.app')
 
+@section('title', 'MMTT | Shop')
+
 @section('content')
 
 <div class="container-fluid page-header py-5">
@@ -15,10 +17,12 @@
             <div class="col-lg-12">
                 <div class="row g-4">
                     <div class="col-xl-3">
-                        <div class="input-group w-100 mx-auto d-flex">
-                            <input type="search" class="form-control p-3" placeholder="keywords" aria-describedby="search-icon-1">
-                            <span id="search-icon-1" class="input-group-text p-3"><i class="fa fa-search"></i></span>
-                        </div>
+                        <form action="{{ route('search') }}" method="GET">
+                            <div class="input-group w-100 mx-auto d-flex">
+                                <input type="text" name="q" class="form-control p-3" placeholder="Search products..." aria-describedby="search-icon-1">
+                                <button type="submit" id="search-icon-1" class="input-group-text p-3 btn btn-primary"><i class="fa fa-search"></i></button>
+                            </div>
+                        </form>
                     </div>
                     <div class="col-6"></div>
                     <div class="col-xl-3">
@@ -41,35 +45,18 @@
                                     <h4>Categories</h4>
                                     <ul class="list-unstyled fruite-categorie">
                                         <li>
-                                            <div class="d-flex justify-content-between fruite-name">
-                                                <a href="#"><i class="fas fa-apple-alt me-2"></i>Apples</a>
-                                                <span>(3)</span>
+                                            <div class="d-flex fruite-name">
+                                                <a href="{{ route('shop.index') }}"><i class="fas fa-th me-2"></i>All Products</a>
                                             </div>
                                         </li>
+                                        @foreach($categories as $cat => $count)
                                         <li>
                                             <div class="d-flex justify-content-between fruite-name">
-                                                <a href="#"><i class="fas fa-apple-alt me-2"></i>Oranges</a>
-                                                <span>(5)</span>
+                                                <a href="{{ route('search', ['category' => $cat]) }}"><i class="fas fa-apple-alt me-2"></i>{{ ucfirst($cat) }}</a>
+                                                <span>({{ $count }})</span>
                                             </div>
                                         </li>
-                                        <li>
-                                            <div class="d-flex justify-content-between fruite-name">
-                                                <a href="#"><i class="fas fa-apple-alt me-2"></i>Strawbery</a>
-                                                <span>(2)</span>
-                                            </div>
-                                        </li>
-                                        <li>
-                                            <div class="d-flex justify-content-between fruite-name">
-                                                <a href="#"><i class="fas fa-apple-alt me-2"></i>Banana</a>
-                                                <span>(8)</span>
-                                            </div>
-                                        </li>
-                                        <li>
-                                            <div class="d-flex justify-content-between fruite-name">
-                                                <a href="#"><i class="fas fa-apple-alt me-2"></i>Pumpkin</a>
-                                                <span>(5)</span>
-                                            </div>
-                                        </li>
+                                        @endforeach
                                     </ul>
                                 </div>
                             </div>
@@ -92,9 +79,17 @@
                                             <div class="text-white bg-secondary px-3 py-1 rounded position-absolute" style="top: 10px; left: 10px;">
                                                 {{ $data->category ?? 'General' }}
                                             </div>
+                                            {{-- Early Access badge shown to Tier 3 users for upcoming products --}}
+                                            @auth
+                                                @if(Auth::user()->tier && Auth::user()->tier->title === 'Tier 3' && $data->classification === 'upcoming')
+                                                    <div class="text-white bg-primary px-2 py-1 rounded position-absolute" style="top: 10px; right: 10px; font-size:0.75rem;">
+                                                        <i class="fas fa-star me-1"></i>Early Access
+                                                    </div>
+                                                @endif
+                                            @endauth
                                             <div class="p-4 border-top-0 rounded-bottom">
                                                 <h4>{{ $data->title }}</h4>
-                                                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit sed do eiusmod te incididunt</p>
+                                                <p class="text-muted small">{{ Str::limit($data->short_description, 80) }}</p>
                                                 <div class="d-flex justify-content-between flex-lg-wrap">
                                                     <p class="text-dark fs-5 fw-bold mb-0">${{ $data->getPrice() }}</p>
                                                     <a href="{{ route('cart.addfromstorepage', ['id' => $data->id]) }}" class="btn border border-secondary rounded-pill px-3 text-primary">

@@ -63,10 +63,14 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
+        // all new users start on tier 1 with zero points
         return User::create([
             'name' => $data['name'],
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
+            'role' => 'user',
+            'tier_id' => 1,
+            'points_balance' => 0,
         ]);
     }
 }

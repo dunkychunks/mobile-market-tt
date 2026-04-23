@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Product;
 use App\Traits\PhpFlasher;
 
 class HomeController extends Controller
@@ -9,23 +10,16 @@ class HomeController extends Controller
 
     use PhpFlasher;
 
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
     public function __construct()
     {
         // $this->middleware('auth');
     }
 
-    /**
-     * Description here
-     *
-     * @return \Illuminate\Contracts\Support\Renderable
-     */
     public function index()
     {
-        return view('home');
+        // grab 8 products to feature on the home page
+        $featured_products = Product::withPrices()->limit(8)->get();
+
+        return view('home', compact('featured_products'));
     }
 }

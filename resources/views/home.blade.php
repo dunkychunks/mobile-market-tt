@@ -1,5 +1,7 @@
 @extends('layouts.app')
 
+@section('title', 'Mobile Market TT')
+
 @section('content')
 
     <div class="container-fluid py-5 mb-5 hero-header">
@@ -13,10 +15,10 @@
                         We address the challenges of traditional markets by offering convenient delivery,
                         customizable bundles, and a rewarding gamified shopping experience.
                     </p>
-                    <div class="position-relative mx-auto">
-                        <input class="form-control border-2 border-secondary w-75 py-3 px-4 rounded-pill" type="number" placeholder="Search produce...">
-                        <button type="submit" class="btn btn-primary border-2 border-secondary py-3 px-4 position-absolute rounded-pill text-white h-100" style="top: 0; right: 25%;">Search</button>
-                    </div>
+                    <form action="{{ route('search') }}" method="GET" class="position-relative mx-auto" style="max-width:500px;">
+                        <input name="q" class="form-control border-2 border-secondary w-100 py-3 px-4 rounded-pill" type="text" placeholder="Search produce...">
+                        <button type="submit" class="btn btn-primary border-2 border-secondary py-3 px-4 position-absolute rounded-pill text-white h-100" style="top: 0; right: 0;">Search</button>
+                    </form>
                 </div>
                 <div class="col-md-12 col-lg-5">
                     <div id="carouselId" class="carousel slide position-relative" data-bs-ride="carousel">
@@ -113,26 +115,32 @@
                 <div class="tab-content">
                     <div id="tab-1" class="tab-pane fade show p-0 active">
                         <div class="row g-4">
-                            <div class="col-lg-12">
-                                <div class="row g-4">
-                                    <div class="col-md-6 col-lg-4 col-xl-3">
-                                        <div class="rounded position-relative fruite-item">
-                                            <div class="fruite-img">
-                                                <img src="{{ asset('theme/img/fruite-item-5.jpg') }}" class="img-fluid w-100 rounded-top" alt="">
-                                            </div>
-                                            <div class="text-white bg-secondary px-3 py-1 rounded position-absolute" style="top: 10px; left: 10px;">Fruits</div>
-                                            <div class="p-4 border border-secondary border-top-0 rounded-bottom">
-                                                <h4>Grapes</h4>
-                                                <p>Fresh, locally sourced grapes perfect for a healthy snack.</p>
-                                                <div class="d-flex justify-content-between flex-lg-wrap">
-                                                    <p class="text-dark fs-5 fw-bold mb-0">$4.99 / kg</p>
-                                                    <a href="{{ route('shop.index') }}" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart</a>
-                                                </div>
+                            @forelse($featured_products as $data)
+                                <div class="col-md-6 col-lg-4 col-xl-3">
+                                    <div class="rounded position-relative fruite-item border border-secondary">
+                                        <div class="fruite-img">
+                                            <img src="{{ $data->getImage() }}" class="img-fluid w-100 rounded-top" alt="{{ $data->title }}">
+                                        </div>
+                                        <div class="text-white bg-secondary px-3 py-1 rounded position-absolute" style="top: 10px; left: 10px;">
+                                            {{ $data->category ?? 'General' }}
+                                        </div>
+                                        <div class="p-4 border-top-0 rounded-bottom">
+                                            <h4>{{ $data->title }}</h4>
+                                            <p class="text-muted small">{{ Str::limit($data->short_description, 70) }}</p>
+                                            <div class="d-flex justify-content-between flex-lg-wrap">
+                                                <p class="text-dark fs-5 fw-bold mb-0">${{ $data->getPrice() }}</p>
+                                                <a href="{{ route('cart.addfromstorepage', ['id' => $data->id]) }}" class="btn border border-secondary rounded-pill px-3 text-primary">
+                                                    <i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart
+                                                </a>
                                             </div>
                                         </div>
                                     </div>
-                                    </div>
-                            </div>
+                                </div>
+                            @empty
+                                <div class="col-12 text-center">
+                                    <p class="text-muted">No products available yet. <a href="{{ route('shop.index') }}">Browse the shop</a>.</p>
+                                </div>
+                            @endforelse
                         </div>
                     </div>
                 </div>

@@ -78,3 +78,86 @@
         @endif
     </div>
 </div>
+
+{{-- tier benefits comparison table --}}
+<div class="border border-secondary rounded p-4 mb-4">
+    <p class="text-secondary mb-3"><i class="fas fa-gift me-2"></i>Tier Benefits</p>
+
+    @php
+        $benefits = [
+            'Tier 1' => [
+                'spending' => '$0',
+                'points'   => '10 pts per $1',
+                'delivery' => 'Standard (orders over $50)',
+                'discount' => 'None',
+                'access'   => 'Standard',
+            ],
+            'Tier 2' => [
+                'spending' => '$500',
+                'points'   => '10 pts per $1',
+                'delivery' => 'Standard (orders over $25)',
+                'discount' => '5% off every order',
+                'access'   => 'Standard',
+            ],
+            'Tier 3' => [
+                'spending' => '$1,000',
+                'points'   => '15 pts per $1',
+                'delivery' => 'Free on all orders',
+                'discount' => '10% off every order',
+                'access'   => 'Early Access to new products',
+            ],
+        ];
+    @endphp
+
+    <div class="table-responsive">
+        <table class="table table-bordered text-center">
+            <thead>
+                <tr class="table-light">
+                    <th class="text-start">Benefit</th>
+                    @foreach($tier_data as $tier)
+                        <th class="{{ $tier_helper->tier->title === $tier->title ? 'text-primary' : '' }}">
+                            {{ Str::ucfirst($tier->title) }}
+                            @if($tier_helper->tier->title === $tier->title)
+                                <span class="badge bg-secondary ms-1">You</span>
+                            @endif
+                        </th>
+                    @endforeach
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="text-start text-muted">Min. Spend</td>
+                    @foreach($tier_data as $tier)
+                        <td>{{ $benefits[$tier->title]['spending'] ?? '-' }}</td>
+                    @endforeach
+                </tr>
+                <tr>
+                    <td class="text-start text-muted">Points Earned</td>
+                    @foreach($tier_data as $tier)
+                        <td>{{ $benefits[$tier->title]['points'] ?? '-' }}</td>
+                    @endforeach
+                </tr>
+                <tr>
+                    <td class="text-start text-muted">Free Delivery</td>
+                    @foreach($tier_data as $tier)
+                        <td>{{ $benefits[$tier->title]['delivery'] ?? '-' }}</td>
+                    @endforeach
+                </tr>
+                <tr>
+                    <td class="text-start text-muted">Discount</td>
+                    @foreach($tier_data as $tier)
+                        <td>{{ $benefits[$tier->title]['discount'] ?? '-' }}</td>
+                    @endforeach
+                </tr>
+                <tr>
+                    <td class="text-start text-muted">Product Access</td>
+                    @foreach($tier_data as $tier)
+                        <td class="{{ $tier->title === 'Tier 3' ? 'text-primary fw-semibold' : '' }}">
+                            {{ $benefits[$tier->title]['access'] ?? '-' }}
+                        </td>
+                    @endforeach
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

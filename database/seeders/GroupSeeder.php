@@ -13,22 +13,22 @@ class GroupSeeder extends Seeder
      */
     public function run(): void
     {
-        // Create all groups available
+        // Create pricing groups for each loyalty tier
         DB::table('groups')->insert([
             [
-                'title' => 'tier 1',
+                'title' => 'Price Group - Tier 1',
                 'created_at' => Carbon::now(),
             ],
             [
-                'title' => 'tier 2',
+                'title' => 'Price Group - Tier 2',
                 'created_at' => Carbon::now(),
             ],
             [
-                'title' => 'tier 3',
+                'title' => 'Price Group - Tier 3',
                 'created_at' => Carbon::now(),
             ],
             [
-                'title' => 'subscribed',
+                'title' => 'Subscribed',
                 'created_at' => Carbon::now(),
             ],
         ]);

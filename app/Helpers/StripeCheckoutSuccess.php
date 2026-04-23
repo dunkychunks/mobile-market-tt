@@ -43,11 +43,9 @@ class StripeCheckoutSuccess
             $user_id = $order->user_id;
             $user = User::where('id', $user_id)->first();
 
-            // Which shipping did the user select
-            $shipping_id = Shipping::where('stripe_id', $order_completed_data['stripe_id'])
-                ->get()
-                ->first()
-                ->id;
+            // Which shipping did the user select (default to 1 if none matched)
+            $shipping = Shipping::where('stripe_id', $order_completed_data['stripe_id'])->first();
+            $shipping_id = $shipping ? $shipping->id : 1;
 
 
             $order->subtotal = $order_completed_data['subtotal'];

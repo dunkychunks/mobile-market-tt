@@ -23,12 +23,14 @@ class ProductController extends Controller
         $group_ids = Auth::check() ? Auth::user()->getGroups() : [1];
 
         //retrieves products from the Products table
-
-        //$product_data = Product::withPrices()->get();
         $product_data = Product::withPrices()->paginate(6);
 
-        //pass data to the Products page to display
+        // category counts for the sidebar filter
+        $categories = Product::selectRaw('category, count(*) as count')
+            ->groupBy('category')
+            ->pluck('count', 'category');
 
-        return view('pages.default.productspage', compact('product_data'));
+        //pass data to the Products page to display
+        return view('pages.default.productspage', compact('product_data', 'categories'));
     }
 }

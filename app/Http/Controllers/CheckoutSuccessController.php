@@ -28,7 +28,12 @@ class CheckoutSuccessController extends Controller
 
         OrderPaid::dispatch($order);
 
-        $tier_helper = new TierHelper(Auth::user()->load('tier'));
+        // award 10 points per dollar spent (as per gamification spec)
+        $pointsAwarded = (int)($order->total * 10);
+        $order->user->increment('points_balance', $pointsAwarded);
+
+        // reload user so tier helper sees up-to-date data after tier update
+        $tier_helper = new TierHelper(Auth::user()->fresh()->load('tier'));
         $tier_helper->checkTierProgress();
 
         return view('pages.default.checkout-successpage', compact('order', 'tier_helper'));

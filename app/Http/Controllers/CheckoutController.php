@@ -9,6 +9,12 @@ class CheckoutController extends Controller
 {
     use PhpFlasher;
 
+    // stub - reserved for future points redemption at checkout
+    public function points()
+    {
+        return redirect()->route('checkout.index');
+    }
+
     public function index()
     {
 

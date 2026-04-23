@@ -8,6 +8,9 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\CheckoutPaymentController;
 use App\Http\Controllers\CheckoutSuccessController;
+use App\Http\Controllers\SearchController;
+use App\Http\Controllers\StaticController;
+use App\Http\Controllers\UserController;
 use App\Http\Controllers\tiers\TierController;
 
 Auth::routes();
@@ -15,11 +18,19 @@ Auth::routes();
 Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home.index');
 
-Route::get('/store', [ProductController::class, 'index'])->name('store.index');
 Route::get('/shop', [ProductController::class, 'index'])->name('shop.index');
+Route::get('/store', [ProductController::class, 'index'])->name('store.index');
 
-Route::get('/details/{id}', [DetailController::class, 'index'])->name('store.details');
 Route::get('/details/{id}', [DetailController::class, 'index'])->name('shop.details');
+Route::get('/store/details/{id}', [DetailController::class, 'index'])->name('store.details');
+
+Route::get('/search', [SearchController::class, 'index'])->name('search');
+
+// static info pages
+Route::get('/contact', [StaticController::class, 'contact'])->name('contact');
+Route::get('/about', [StaticController::class, 'about'])->name('about');
+Route::get('/privacy', [StaticController::class, 'privacy'])->name('privacy');
+Route::get('/terms', [StaticController::class, 'terms'])->name('terms');
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
@@ -42,6 +53,7 @@ Route::middleware(['auth'])->group(function () {
 include('filament-routes.php');
 
 Route::prefix('user')->middleware(['auth'])->name('user.')->group(function () {
-    // Subscriptions goes here
     Route::get('/tiers', [TierController::class, 'index'])->name('tiers.index');
+    Route::get('/profile', [UserController::class, 'profile'])->name('profile');
+    Route::get('/orders', [UserController::class, 'orders'])->name('orders.index');
 });

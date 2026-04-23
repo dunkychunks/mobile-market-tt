@@ -144,10 +144,9 @@
                 <h4 class="user-name">{{ Auth::user()->name }}</h4> --}}
 
                 <ul class="user-sidebar-list">
-                    <li><a href="#">Profile</a></li>
-                    <li><a href="#">Tiers</a></li>
-                    <li><a href="#">Subscriptions</a></li>
-                    <li><a href="#">Order History</a></li>
+                    <li><a href="{{ route('user.profile') }}">Profile</a></li>
+                    <li><a href="{{ route('user.tiers.index') }}">My Rewards</a></li>
+                    <li><a href="{{ route('user.orders.index') }}">Order History</a></li>
                 </ul>
             </div>
 

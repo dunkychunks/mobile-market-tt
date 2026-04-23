@@ -22,7 +22,13 @@ class GroupResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'title';
 
-    protected static ?int $navigationSort = 3;
+    protected static ?string $navigationLabel = 'Price Groups';
+
+    protected static ?string $modelLabel = 'Price Group';
+
+    protected static ?string $pluralModelLabel = 'Price Groups';
+
+    protected static ?int $navigationSort = 5;
 
     public static function form(Schema $schema): Schema
     {
