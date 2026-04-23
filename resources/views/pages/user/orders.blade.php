@@ -59,6 +59,16 @@
                         <span class="small">${{ app('CustomHelper')->formatPrice($order->subtotal) }}</span>
                     </div>
                     <div class="d-flex justify-content-between mb-1">
+                        <span class="text-muted small">Shipping</span>
+                        <span class="small">
+                            @if($order->shipping)
+                                {{ $order->shipping->title }} — ${{ app('CustomHelper')->formatPrice($order->shipping->price) }}
+                            @else
+                                —
+                            @endif
+                        </span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-1">
                         <span class="text-muted small">Payment Method</span>
                         <span class="small">{{ ucwords(str_replace('_', ' ', $order->payment_method ?? 'Credit Card')) }}</span>
                     </div>

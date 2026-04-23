@@ -18,7 +18,7 @@ class CheckoutSuccessController extends Controller
     {
         // direct orders (non-Stripe) use a "direct-" prefixed payment_id
         if (str_starts_with($id, 'direct-')) {
-            $order = Order::where('payment_id', $id)->first();
+            $order = Order::with(['products', 'shipping'])->where('payment_id', $id)->first();
 
             if (!$order) {
                 abort(404);
@@ -32,7 +32,7 @@ class CheckoutSuccessController extends Controller
                 abort(404);
             }
 
-            $order = Order::where('payment_id', $id)->first();
+            $order = Order::with(['products', 'shipping'])->where('payment_id', $id)->first();
 
             // fire the OrderPaid event (handles tier auto-upgrade)
             OrderPaid::dispatch($order);

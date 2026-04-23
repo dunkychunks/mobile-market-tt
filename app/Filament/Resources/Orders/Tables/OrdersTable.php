@@ -28,8 +28,11 @@ class OrdersTable
                     ->label('Total')
                     ->money('usd')
                     ->sortable(),
+                TextColumn::make('shipping.title')
+                    ->label('Shipping')
+                    ->default('—'),
                 TextColumn::make('payment_method')
-                    ->label('Method')
+                    ->label('Pay Method')
                     ->formatStateUsing(fn ($state) => ucwords(str_replace('_', ' ', $state ?? 'N/A')))
                     ->sortable(),
                 TextColumn::make('payment_status')

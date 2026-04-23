@@ -50,7 +50,11 @@
                     </div>
                     <div class="d-flex justify-content-between mb-2">
                         <span class="text-muted">Shipping</span>
-                        <span class="text-muted">—</span>
+                        @if($order->shipping)
+                            <span>{{ $order->shipping->title }} — ${{ app('CustomHelper')->formatPrice($order->shipping->price) }}</span>
+                        @else
+                            <span class="text-muted">—</span>
+                        @endif
                     </div>
                     <div class="d-flex justify-content-between fw-bold border-top border-secondary pt-2 mt-2">
                         <span>Total {{ $isPaid ? 'Paid' : 'Due' }}</span>
