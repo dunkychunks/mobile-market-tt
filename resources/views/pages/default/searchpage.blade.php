@@ -84,16 +84,42 @@
                                     <div class="text-white bg-secondary px-3 py-1 rounded position-absolute" style="top: 10px; left: 10px;">
                                         {{ $data->category ?? 'General' }}
                                     </div>
-                                    <div class="p-4 border-top-0 rounded-bottom">
-                                        <h4>{{ $data->title }}</h4>
-                                        <p class="text-muted small">{{ Str::limit($data->short_description, 80) }}</p>
-                                        <div class="d-flex justify-content-between flex-lg-wrap">
-                                            <p class="text-dark fs-5 fw-bold mb-0">${{ $data->getPrice() }}</p>
-                                            <a href="{{ route('cart.addfromstorepage', ['id' => $data->id]) }}" class="btn border border-secondary rounded-pill px-3 text-primary">
-                                                <i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart
+                                    <div class="p-4 border-top-0 rounded-bottom d-flex flex-column">
+                                        <h5>{{ $data->title }}</h5>
+                                        <p class="text-muted small flex-grow-1">{{ Str::limit($data->short_description, 80) }}</p>
+                                        <p class="text-dark fs-5 fw-bold mb-3">${{ $data->getPrice() }}</p>
+
+                                        @auth
+                                            <form action="{{ route('cart.store') }}" method="POST">
+                                                @csrf
+                                                @method('PUT')
+                                                <input type="hidden" name="product_id" value="{{ $data->id }}">
+                                                <div class="d-flex align-items-center gap-2 mb-2">
+                                                    <div class="input-group quantity" style="width:110px;">
+                                                        <div class="input-group-btn">
+                                                            <button type="button" class="btn btn-sm btn-minus rounded-circle bg-light border">
+                                                                <i class="fa fa-minus"></i>
+                                                            </button>
+                                                        </div>
+                                                        <input type="text" name="quantity" class="form-control form-control-sm text-center border-0" value="1">
+                                                        <div class="input-group-btn">
+                                                            <button type="button" class="btn btn-sm btn-plus rounded-circle bg-light border">
+                                                                <i class="fa fa-plus"></i>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                    <button type="submit" class="btn border border-secondary rounded-pill px-3 text-primary flex-grow-1">
+                                                        <i class="fa fa-shopping-bag me-1 text-primary"></i> Add to Cart
+                                                    </button>
+                                                </div>
+                                            </form>
+                                        @else
+                                            <a href="{{ route('login') }}" class="btn border border-secondary rounded-pill px-3 text-primary w-100">
+                                                <i class="fa fa-shopping-bag me-1 text-primary"></i> Add to Cart
                                             </a>
-                                        </div>
-                                        <div class="text-center mt-3">
+                                        @endauth
+
+                                        <div class="text-center mt-2">
                                             <a href="{{ $data->getLink() }}" class="small text-muted">View Details</a>
                                         </div>
                                     </div>

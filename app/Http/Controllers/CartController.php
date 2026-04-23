@@ -68,6 +68,30 @@ class CartController extends Controller
 
 
     /**
+     * Update the quantity of an existing cart item.
+     * Removes the item if quantity drops to zero.
+     */
+    public function update(Request $request, string $id)
+    {
+        $item = Cart::findOrFail($id);
+
+        if ($item->user_id !== Auth::id()) {
+            abort(403);
+        }
+
+        $qty = max(0, (int) $request->input('quantity', 1));
+
+        if ($qty === 0) {
+            $item->delete();
+            $this->flashInfo('Item removed from cart.');
+        } else {
+            $item->update(['quantity' => $qty]);
+        }
+
+        return redirect()->route('cart.index');
+    }
+
+    /**
      * Remove the specified resource from storage.
      */
     public function destroy(string $id)

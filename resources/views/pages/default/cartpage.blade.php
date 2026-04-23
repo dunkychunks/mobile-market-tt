@@ -45,9 +45,22 @@
                                         </td>
                                         <td>${{ app('CustomHelper')->formatPrice($data->getPrice()) }}</td>
                                         <td>
-                                            <div class="input-group quantity" style="width:100px;">
-                                                <input type="text" class="form-control form-control-sm text-center border-0"
-                                                       value="{{ $data->pivot->quantity }}" readonly>
+                                            <div class="d-flex align-items-center gap-1">
+                                                <form action="{{ route('cart.update', ['id' => $data->pivot->id]) }}" method="POST" class="d-inline">
+                                                    @csrf @method('PATCH')
+                                                    <input type="hidden" name="quantity" value="{{ max(0, $data->pivot->quantity - 1) }}">
+                                                    <button type="submit" class="btn btn-sm btn-minus rounded-circle bg-light border">
+                                                        <i class="fa fa-minus"></i>
+                                                    </button>
+                                                </form>
+                                                <span class="px-2 fw-semibold" style="min-width:2rem;text-align:center;">{{ $data->pivot->quantity }}</span>
+                                                <form action="{{ route('cart.update', ['id' => $data->pivot->id]) }}" method="POST" class="d-inline">
+                                                    @csrf @method('PATCH')
+                                                    <input type="hidden" name="quantity" value="{{ $data->pivot->quantity + 1 }}">
+                                                    <button type="submit" class="btn btn-sm btn-plus rounded-circle bg-light border">
+                                                        <i class="fa fa-plus"></i>
+                                                    </button>
+                                                </form>
                                             </div>
                                         </td>
                                         <td class="fw-semibold">
