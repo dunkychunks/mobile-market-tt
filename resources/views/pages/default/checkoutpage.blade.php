@@ -129,7 +129,11 @@
                     @endif
 
                     {{-- shipping method --}}
-                    @php $isTier3 = Auth::user()->load('tier')->tier?->title === 'Tier 3'; @endphp
+                    @php
+                        $isTier3 = Auth::user()->load('tier')->tier?->title === 'Tier 3';
+                        // Default selection: first shipping option the current user can actually use
+                        $defaultShippingId = old('shipping_id', $shippings->first(fn($s) => $isTier3 || (float)$s->price > 0)?->id ?? $shippings->first()?->id);
+                    @endphp
                     <div class="border border-secondary rounded p-3 mb-4">
                         <h5 class="text-primary mb-3">Shipping Method</h5>
                         @foreach($shippings as $shipping)
@@ -140,7 +144,7 @@
                                    value="{{ $shipping->id }}"
                                    data-price="{{ $shipping->price }}"
                                    data-tier3-only="{{ $isFreeExpress ? '1' : '0' }}"
-                                   {{ old('shipping_id', '') == $shipping->id ? 'checked' : ($loop->first && !old('shipping_id') ? 'checked' : '') }}>
+                                   {{ (string)$defaultShippingId === (string)$shipping->id ? 'checked' : '' }}>
                             <label class="form-check-label" for="ship_{{ $shipping->id }}">
                                 <span class="fw-semibold">{{ $shipping->title }}</span>
                                 <span class="text-muted ms-2">
@@ -275,7 +279,9 @@
             if (!checked) return;
 
             if (!isTier3 && checked.dataset.tier3Only === '1') {
-                radios[0].checked = true;
+                // Revert to first shipping option the user can actually use
+                const fallback = Array.from(radios).find(r => r.dataset.tier3Only !== '1');
+                if (fallback) fallback.checked = true;
                 alert('Free Express Shipping is a Tier 3 benefit. Spend $1,000 to unlock.');
                 update();
                 return;
