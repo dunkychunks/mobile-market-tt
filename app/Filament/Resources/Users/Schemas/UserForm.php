@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Users\Schemas;
 
 use Filament\Schemas\Schema;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\CreateRecord;
 use Filament\Forms\Components\DateTimePicker;
@@ -15,7 +16,11 @@ class UserForm
             ->components([
                 TextInput::make('name')
                     ->required(),
-                TextInput::make('role')
+                Select::make('role')
+                    ->options([
+                        'user'  => 'User',
+                        'admin' => 'Admin',
+                    ])
                     ->required()
                     ->default('user'),
                 TextInput::make('email')

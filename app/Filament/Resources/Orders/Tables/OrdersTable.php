@@ -2,10 +2,12 @@
 
 namespace App\Filament\Resources\Orders\Tables;
 
+use App\Events\OrderPaid;
+use App\Models\Order;
+use Filament\Actions\Action;
+use Filament\Notifications\Notification;
 use Filament\Tables\Table;
-use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Columns\BadgeColumn;
 
 class OrdersTable
 {
@@ -53,7 +55,25 @@ class OrdersTable
                 //
             ])
             ->recordActions([
-                //
+                /*
+                 * Fires the same OrderPaid event that Stripe fires on successful payment,
+                 * so tier upgrade logic runs consistently regardless of payment method.
+                 */
+                Action::make('markPaid')
+                    ->label('Mark as Paid')
+                    ->icon('heroicon-o-check-circle')
+                    ->color('success')
+                    ->visible(fn (Order $record): bool => $record->payment_status === 'pending')
+                    ->requiresConfirmation()
+                    ->action(function (Order $record): void {
+                        $record->update(['payment_status' => 'paid']);
+                        OrderPaid::dispatch($record);
+
+                        Notification::make()
+                            ->title('Order marked as paid. Tier updated if applicable.')
+                            ->success()
+                            ->send();
+                    }),
             ])
             ->defaultSort('created_at', 'desc');
     }
