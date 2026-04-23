@@ -49,7 +49,9 @@ class CheckoutSuccessController extends Controller
         $tier_helper = new TierHelper(Auth::user()->fresh()->load('tier'));
         $tier_helper->checkTierProgress();
 
-        if ($tier_helper->tier_upgraded > 0) {
+        // Only notify on the actual upgrade request — session flag is set by UpdateUserTier
+        // listener (synchronous, same request) and consumed here via pull() so refreshes are silent.
+        if (session()->pull('tier_just_upgraded_to')) {
             $this->flashSuccess('Congratulations! You\'ve been upgraded to ' . $tier_helper->tier->title . '!');
             session()->flash('tier_just_upgraded', $tier_helper->tier->title);
         }

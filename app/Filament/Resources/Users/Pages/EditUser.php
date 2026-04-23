@@ -24,7 +24,7 @@ class EditUser extends EditRecord
                 ->icon('heroicon-o-envelope')
                 ->color('info')
                 ->action(function (): void {
-                    $this->getRecord()->update(['email_verified_at' => now()]);
+                    $this->getRecord()->forceFill(['email_verified_at' => now()])->save();
 
                     Notification::make()
                         ->title('Verification email sent. User is now verified for demo purposes.')

@@ -29,6 +29,7 @@ class UpdateUserTier
         if ($newTier && $user->tier_id !== $newTier->id) {
             $user->tier_id = $newTier->id;
             $user->save();
+            session(['tier_just_upgraded_to' => $newTier->id]);
         }
     }
 }
