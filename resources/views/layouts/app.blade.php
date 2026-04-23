@@ -24,7 +24,10 @@
         /* prevent horizontal overflow on small screens */
         body { overflow-x: hidden; }
         .table-responsive-always { overflow-x: auto; }
+        /* reduce the inner-page banner height by ~45% */
+        .page-header { padding-top: 1.5rem !important; padding-bottom: 1.5rem !important; }
         @media (max-width: 576px) {
+            .page-header { padding-top: 1rem !important; padding-bottom: 1rem !important; }
             .page-header h1 { font-size: 1.5rem !important; }
         }
         /*
