@@ -2,23 +2,30 @@
 
 namespace App\Providers\Filament;
 
-use Filament\Panel;
-use Filament\PanelProvider;
-use Filament\Pages\Dashboard;
-use Filament\Support\Colors\Color;
-use Filament\Widgets\AccountWidget;
-use Filament\Navigation\NavigationItem;
-use Filament\Widgets\FilamentInfoWidget;
+use App\Filament\Resources\Groups\GroupResource;
+use App\Filament\Resources\Messages\MessageResource;
+use App\Filament\Resources\Orders\OrderResource;
+use App\Filament\Resources\Products\ProductResource;
+use App\Filament\Resources\Shippings\ShippingResource;
+use App\Filament\Resources\Tiers\TierResource;
+use App\Filament\Resources\Users\UserResource;
+use App\Filament\Widgets\StoreStatsWidget;
 use Filament\Http\Middleware\Authenticate;
-use Illuminate\Session\Middleware\StartSession;
-use Illuminate\Cookie\Middleware\EncryptCookies;
 use Filament\Http\Middleware\AuthenticateSession;
-use Illuminate\Routing\Middleware\SubstituteBindings;
-use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
-use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
+use Filament\Navigation\NavigationItem;
+use Filament\Pages\Dashboard;
+use Filament\Panel;
+use Filament\PanelProvider;
+use Filament\Support\Colors\Color;
+use Filament\Widgets\AccountWidget;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
+use Illuminate\Cookie\Middleware\EncryptCookies;
+use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
+use Illuminate\Routing\Middleware\SubstituteBindings;
+use Illuminate\Session\Middleware\StartSession;
+use Illuminate\View\Middleware\ShareErrorsFromSession;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -33,15 +40,25 @@ class AdminPanelProvider extends PanelProvider
             ->colors([
                 'primary' => Color::Amber,
             ])
-            ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')
-            ->discoverPages(in: app_path('Filament/Pages'), for: 'App\Filament\Pages')
+            /*
+             * Explicit registration is used instead of discoverResources/discoverWidgets
+             * to avoid filesystem scanning on every request, which was causing slow loads.
+             */
+            ->resources([
+                ProductResource::class,
+                UserResource::class,
+                GroupResource::class,
+                OrderResource::class,
+                ShippingResource::class,
+                TierResource::class,
+                MessageResource::class,
+            ])
             ->pages([
                 Dashboard::class,
             ])
-            ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\Filament\Widgets')
             ->widgets([
                 AccountWidget::class,
-                FilamentInfoWidget::class,
+                StoreStatsWidget::class,
             ])
             ->middleware([
                 EncryptCookies::class,
