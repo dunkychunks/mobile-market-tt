@@ -47,23 +47,27 @@
             <div class="col-lg-6">
                 <div class="border border-secondary rounded p-4">
                     <h5 class="text-primary mb-4">Send a Message</h5>
-                    <form>
+                    <form action="{{ route('contact.submit') }}" method="POST">
                         @csrf
                         <div class="mb-3">
                             <label class="form-label">Your Name</label>
-                            <input type="text" class="form-control" placeholder="Enter your name">
+                            <input type="text" name="name" class="form-control @error('name') is-invalid @enderror" placeholder="Enter your name" value="{{ old('name') }}">
+                            @error('name')<div class="invalid-feedback">{{ $message }}</div>@enderror
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Email Address</label>
-                            <input type="email" class="form-control" placeholder="Enter your email">
+                            <input type="email" name="email" class="form-control @error('email') is-invalid @enderror" placeholder="Enter your email" value="{{ old('email') }}">
+                            @error('email')<div class="invalid-feedback">{{ $message }}</div>@enderror
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Subject</label>
-                            <input type="text" class="form-control" placeholder="Enter subject">
+                            <input type="text" name="subject" class="form-control @error('subject') is-invalid @enderror" placeholder="Enter subject" value="{{ old('subject') }}">
+                            @error('subject')<div class="invalid-feedback">{{ $message }}</div>@enderror
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Message</label>
-                            <textarea class="form-control" rows="5" placeholder="Your message..."></textarea>
+                            <textarea name="body" class="form-control @error('body') is-invalid @enderror" rows="5" placeholder="Your message...">{{ old('body') }}</textarea>
+                            @error('body')<div class="invalid-feedback">{{ $message }}</div>@enderror
                         </div>
                         <button type="submit" class="btn btn-primary rounded-pill px-5">Send Message</button>
                     </form>

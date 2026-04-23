@@ -28,6 +28,7 @@ Route::get('/search', [SearchController::class, 'index'])->name('search');
 
 // static info pages
 Route::get('/contact', [StaticController::class, 'contact'])->name('contact');
+Route::post('/contact', [StaticController::class, 'contactSubmit'])->name('contact.submit');
 Route::get('/about', [StaticController::class, 'about'])->name('about');
 Route::get('/privacy', [StaticController::class, 'privacy'])->name('privacy');
 Route::get('/terms', [StaticController::class, 'terms'])->name('terms');
