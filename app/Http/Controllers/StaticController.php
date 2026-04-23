@@ -25,9 +25,12 @@ class StaticController extends Controller
 
         Message::create($data);
 
-        $this->flashSuccess('Your message has been sent. We will get back to you shortly.');
+        return redirect()->route('contact.thanks');
+    }
 
-        return redirect()->route('contact');
+    public function contactThanks()
+    {
+        return view('pages.static.contact-thanks');
     }
 
     public function about()
