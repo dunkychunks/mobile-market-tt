@@ -100,6 +100,29 @@
                         @endforeach
                     </div>
 
+                    {{-- shipping method --}}
+                    <div class="border border-secondary rounded p-3 mb-4">
+                        <h5 class="text-primary mb-3">Shipping Method</h5>
+                        @foreach($shippings as $shipping)
+                        <div class="form-check mb-2">
+                            <input class="form-check-input shipping-radio" type="radio"
+                                   name="shipping_id" id="ship_{{ $shipping->id }}"
+                                   value="{{ $shipping->id }}"
+                                   data-price="{{ $shipping->price }}"
+                                   {{ old('shipping_id', '') == $shipping->id ? 'checked' : ($loop->first && !old('shipping_id') ? 'checked' : '') }}>
+                            <label class="form-check-label" for="ship_{{ $shipping->id }}">
+                                <span class="fw-semibold">{{ $shipping->title }}</span>
+                                <span class="text-muted ms-2">
+                                    {{ $shipping->price > 0 ? '$'.number_format($shipping->price, 2) : 'Free' }}
+                                </span>
+                            </label>
+                        </div>
+                        @endforeach
+                        @error('shipping_id')
+                            <div class="text-danger small mt-1">{{ $message }}</div>
+                        @enderror
+                    </div>
+
                     {{-- totals --}}
                     <div class="border border-secondary rounded p-3 mb-4">
                         <div class="d-flex justify-content-between mb-2">
@@ -108,11 +131,11 @@
                         </div>
                         <div class="d-flex justify-content-between mb-2">
                             <span class="text-muted">Shipping</span>
-                            <span class="text-muted">Calculated by provider</span>
+                            <span id="shipping-display" class="fw-semibold">—</span>
                         </div>
                         <div class="d-flex justify-content-between fw-bold border-top border-secondary pt-2">
                             <span>Estimated Total</span>
-                            <span class="text-primary">${{ app('CustomHelper')->formatPrice($cart_data->getTotal()) }}</span>
+                            <span class="text-primary" id="total-display">${{ app('CustomHelper')->formatPrice($cart_data->getSubtotal()) }}</span>
                         </div>
                     </div>
 
@@ -184,5 +207,31 @@
 
     </div>
 </div>
+
+@push('scripts')
+<script>
+    (function () {
+        const subtotal = {{ $cart_data->getSubtotal() }};
+        const radios   = document.querySelectorAll('.shipping-radio');
+        const shipEl   = document.getElementById('shipping-display');
+        const totalEl  = document.getElementById('total-display');
+
+        function fmt(n) {
+            return '$' + parseFloat(n).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+        }
+
+        function update() {
+            const checked = document.querySelector('.shipping-radio:checked');
+            if (!checked) return;
+            const price = parseFloat(checked.dataset.price) || 0;
+            shipEl.textContent  = price > 0 ? fmt(price) : 'Free';
+            totalEl.textContent = fmt(subtotal + price);
+        }
+
+        radios.forEach(r => r.addEventListener('change', update));
+        update();
+    })();
+</script>
+@endpush
 
 @endsection

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Order;
 use App\Models\OrderProduct;
+use App\Models\Shipping;
 use App\Traits\PhpFlasher;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -32,7 +33,9 @@ class CheckoutController extends Controller
 
         $cart_data->calculateSubtotal();
 
-        return view('pages.default.checkoutpage', compact('cart_data'));
+        $shippings = Shipping::orderBy('price')->get();
+
+        return view('pages.default.checkoutpage', compact('cart_data', 'shippings'));
     }
 
     /**
@@ -44,10 +47,15 @@ class CheckoutController extends Controller
      */
     public function submit(Request $request)
     {
+        $shippingIds = Shipping::pluck('id')->toArray();
+
         $validator = Validator::make($request->all(), [
+            'shipping_id'    => ['required', 'in:' . implode(',', $shippingIds)],
             'payment_method' => ['required', 'in:credit_card,bank_transfer,cheque,cash_on_delivery'],
             'terms'          => ['required', 'accepted'],
         ], [
+            'shipping_id.required'    => 'Please select a shipping method.',
+            'shipping_id.in'          => 'Invalid shipping method selected.',
             'payment_method.required' => 'Please select a payment method.',
             'payment_method.in'       => 'Invalid payment method selected.',
             'terms.required'          => 'You must accept the Terms & Conditions to continue.',
@@ -62,18 +70,19 @@ class CheckoutController extends Controller
 
         $method = $request->input('payment_method');
 
-        // credit card goes through Stripe; everything else is handled here
+        // credit card goes through Stripe; store shipping in session for the payment controller
         if ($method === 'credit_card') {
+            session(['checkout_shipping_id' => (int) $request->input('shipping_id')]);
             return redirect()->route('checkout.payment.index', ['payment' => 'stripe']);
         }
 
-        return $this->createDirectOrder($method);
+        return $this->createDirectOrder($request, $method);
     }
 
     /**
      * Creates an order directly for non-Stripe payment methods.
      */
-    private function createDirectOrder(string $method)
+    private function createDirectOrder(Request $request, string $method)
     {
         $user = Auth::user();
         $cart_data = $user->products()->withPrices()->get();
@@ -84,22 +93,21 @@ class CheckoutController extends Controller
 
         $cart_data->calculateSubtotal();
 
-        $status = match($method) {
-            'credit_card' => 'paid',
-            default       => 'pending',
-        };
+        $shipping    = Shipping::findOrFail((int) $request->input('shipping_id'));
+        $subtotal    = $cart_data->getSubtotal();
+        $orderTotal  = $subtotal + $shipping->price;
 
         $order = new Order();
         $order->user_id             = $user->id;
         $order->order_no            = 'MMTT-' . strtoupper(uniqid());
-        $order->subtotal            = $cart_data->getSubtotal();
-        $order->total               = $cart_data->getTotal();
+        $order->subtotal            = $subtotal;
+        $order->total               = $orderTotal;
         $order->payment_provider    = $method;
         $order->payment_id          = 'direct-' . uniqid();
-        $order->shipping_id         = 1;
+        $order->shipping_id         = $shipping->id;
         $order->shipping_address_id = 1;
         $order->billing_address_id  = 1;
-        $order->payment_status      = $status;
+        $order->payment_status      = 'pending';
         $order->payment_method      = $method;
         $order->save();
 

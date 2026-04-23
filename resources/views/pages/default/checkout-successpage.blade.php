@@ -62,10 +62,39 @@
                     </div>
 
                     @if(!$isPaid)
+                        @if($order->payment_method === 'bank_transfer')
+                        <div class="alert alert-info mt-3 mb-0 small">
+                            <i class="fas fa-university me-2"></i>
+                            <strong>Bank Transfer Instructions</strong><br>
+                            Please transfer <strong>${{ app('CustomHelper')->formatPrice($order->total) }}</strong> to:<br>
+                            <span class="ms-2"><strong>Bank:</strong> Republic Bank Trinidad</span><br>
+                            <span class="ms-2"><strong>Account Name:</strong> Mobile Market TT Ltd.</span><br>
+                            <span class="ms-2"><strong>Account Number:</strong> 123-456-789-0</span><br>
+                            <span class="ms-2"><strong>Reference:</strong> {{ $order->order_no }}</span><br>
+                            Your order will be processed once payment is confirmed.
+                        </div>
+                        @elseif($order->payment_method === 'cheque')
+                        <div class="alert alert-info mt-3 mb-0 small">
+                            <i class="fas fa-file-alt me-2"></i>
+                            <strong>Cheque Payment Instructions</strong><br>
+                            Please make your cheque payable to <strong>Mobile Market TT Ltd.</strong> for
+                            <strong>${{ app('CustomHelper')->formatPrice($order->total) }}</strong>.<br>
+                            Write your order number <strong>{{ $order->order_no }}</strong> on the back.<br>
+                            Mail or deliver to our office. Your order will be dispatched on clearance.
+                        </div>
+                        @elseif($order->payment_method === 'cash_on_delivery')
+                        <div class="alert alert-success mt-3 mb-0 small">
+                            <i class="fas fa-truck me-2"></i>
+                            <strong>Cash on Delivery</strong><br>
+                            Your order is confirmed! Please have <strong>${{ app('CustomHelper')->formatPrice($order->total) }}</strong>
+                            ready in cash when your delivery arrives. Our team will contact you to confirm the delivery time.
+                        </div>
+                        @else
                         <div class="alert alert-info mt-3 mb-0 small">
                             <i class="fas fa-info-circle me-1"></i>
                             Your order is confirmed. Payment is pending — please follow the instructions for your chosen payment method.
                         </div>
+                        @endif
                     @endif
                 </div>
 

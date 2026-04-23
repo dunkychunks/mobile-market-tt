@@ -8,6 +8,7 @@ use App\Helpers\StripeCheckout;
 use App\Models\Order;
 use App\Models\OrderProduct;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
 
 class CheckoutPaymentController extends Controller
 {
@@ -80,7 +81,7 @@ class CheckoutPaymentController extends Controller
         $order->total = $cart_data->getTotal();
         $order->payment_provider = $insert_data['payment_provider'];
         $order->payment_id = $insert_data['payment_id']; // The 'cs_test_...' string
-        $order->shipping_id = 1;
+        $order->shipping_id = Session::pull('checkout_shipping_id', 1);
         $order->shipping_address_id = 1;
         $order->billing_address_id = 1;
         $order->payment_status = 'unpaid'; // Set initial state pending confirmation
