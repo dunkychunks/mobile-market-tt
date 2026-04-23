@@ -6,6 +6,17 @@ use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
+/*
+ * Basic Eloquent search implementation using LIKE queries.
+ *
+ * Architecture note: the search logic is intentionally contained in a single
+ * controller method so it can be replaced by an external search engine in future
+ * (e.g. Laravel Scout + Meilisearch). The indexed fields would be: title,
+ * short_description, full_description, category, classification, status, and
+ * the price computed by Product::withPrices(). The view (searchpage.blade.php)
+ * and URL structure (/search?q=&category=) are engine-agnostic and will not
+ * need to change when the backend is swapped.
+ */
 class SearchController extends Controller
 {
     public function index(Request $request)
