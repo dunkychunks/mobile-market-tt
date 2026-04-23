@@ -99,7 +99,11 @@
                         @else
                             <div class="nav-item dropdown my-auto">
                                 <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
-                                    <i class="fas fa-user fa-2x"></i> <span class="d-none d-md-inline">{{ Auth::user()->name }}</span>
+                                    <i class="fas fa-user fa-2x"></i>
+                                    <span class="d-none d-md-inline">{{ Auth::user()->name }}</span>
+                                    <span class="badge bg-secondary ms-1 d-none d-md-inline" title="Loyalty Points">
+                                        <i class="fas fa-star me-1" style="font-size:0.65rem;"></i>{{ number_format(Auth::user()->points_balance) }}
+                                    </span>
                                 </a>
                                 <div class="dropdown-menu m-0 bg-secondary rounded-0">
                                     @if(Auth::user()->role === 'admin')
