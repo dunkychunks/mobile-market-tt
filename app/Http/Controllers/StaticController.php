@@ -3,10 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\Message;
+use App\Traits\PhpFlasher;
 use Illuminate\Http\Request;
 
 class StaticController extends Controller
 {
+    use PhpFlasher;
     public function contact()
     {
         return view('pages.static.contact');
@@ -23,7 +25,7 @@ class StaticController extends Controller
 
         Message::create($data);
 
-        flash()->success('Your message has been sent. We will get back to you shortly.');
+        $this->flashSuccess('Your message has been sent. We will get back to you shortly.');
 
         return redirect()->route('contact');
     }
