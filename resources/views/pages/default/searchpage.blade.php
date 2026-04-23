@@ -38,7 +38,8 @@
                     <ul class="list-unstyled fruite-categorie">
                         <li>
                             <div class="d-flex fruite-name">
-                                <a href="{{ route('search', ['q' => $q]) }}" class="{{ !$category ? 'text-primary fw-bold' : '' }}">
+                                {{-- clears both search and category --}}
+                                <a href="{{ route('search') }}" class="{{ !$category ? 'text-primary fw-bold' : '' }}">
                                     <i class="fas fa-th me-2"></i>All Categories
                                 </a>
                             </div>
@@ -46,7 +47,8 @@
                         @foreach($categories as $cat)
                         <li>
                             <div class="d-flex fruite-name">
-                                <a href="{{ route('search', ['q' => $q, 'category' => $cat]) }}"
+                                {{-- switching category clears the active search query --}}
+                                <a href="{{ route('search', ['category' => $cat]) }}"
                                    class="{{ $category === $cat ? 'text-primary fw-bold' : '' }}">
                                     <i class="fas fa-apple-alt me-2"></i>{{ ucfirst($cat) }}
                                 </a>

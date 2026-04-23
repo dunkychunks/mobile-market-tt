@@ -41,6 +41,11 @@ class SearchController extends Controller
 
         $results = $query->paginate(12)->appends($request->only('q', 'category'));
 
+        if (($q || $category) && $results->isEmpty()) {
+            notyf()->position('x', 'right')->position('y', 'top')->duration(8000)
+                ->addWarning('No products matched your search. Try different keywords or browse by category.');
+        }
+
         $categories = Product::select('category')->distinct()->pluck('category');
 
         return view('pages.default.searchpage', compact('results', 'q', 'category', 'categories'));
