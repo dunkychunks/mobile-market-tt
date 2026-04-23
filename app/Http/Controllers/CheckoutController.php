@@ -7,6 +7,7 @@ use App\Models\OrderProduct;
 use App\Traits\PhpFlasher;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 
 class CheckoutController extends Controller
 {
@@ -25,7 +26,8 @@ class CheckoutController extends Controller
         $cart_data = $user->products()->withPrices()->get();
 
         if ($cart_data->isEmpty()) {
-            return redirect()->route('cart.index')->with('message', 'Your cart is empty');
+            $this->flashWarning('Your cart is empty.');
+            return redirect()->route('cart.index');
         }
 
         $cart_data->calculateSubtotal();
@@ -35,10 +37,14 @@ class CheckoutController extends Controller
 
     /**
      * Validates the form and routes to the right payment flow.
+     *
+     * Form-level failures (no payment method, terms not accepted) are surfaced via
+     * PhpFlasher toast so the UI stays consistent with the rest of the application.
+     * Field-level @error directives in the view still fire via withErrors().
      */
     public function submit(Request $request)
     {
-        $request->validate([
+        $validator = Validator::make($request->all(), [
             'payment_method' => ['required', 'in:credit_card,bank_transfer,cheque,cash_on_delivery'],
             'terms'          => ['required', 'accepted'],
         ], [
@@ -47,6 +53,12 @@ class CheckoutController extends Controller
             'terms.required'          => 'You must accept the Terms & Conditions to continue.',
             'terms.accepted'          => 'You must accept the Terms & Conditions to continue.',
         ]);
+
+        if ($validator->fails()) {
+            // Surface the first error as a toast; @error directives handle inline feedback
+            $this->flashError($validator->errors()->first());
+            return redirect()->back()->withInput()->withErrors($validator);
+        }
 
         $method = $request->input('payment_method');
 

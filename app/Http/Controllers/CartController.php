@@ -74,8 +74,8 @@ class CartController extends Controller
     {
         Cart::destroy($id);
 
-        $this->flashError('Product removed from cart');
+        $this->flashError('Product removed from cart.');
 
-        return redirect()->route('cart.index')->with('message', "Product removed from cart");
+        return redirect()->route('cart.index');
     }
 }

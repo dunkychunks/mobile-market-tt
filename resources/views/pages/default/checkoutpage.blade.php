@@ -16,17 +16,6 @@
 <div class="container-fluid py-5">
     <div class="container py-5">
 
-        {{-- server-side validation errors --}}
-        @if($errors->any())
-            <div class="alert alert-danger mb-4">
-                <ul class="mb-0">
-                    @foreach($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
-            </div>
-        @endif
-
         <form action="{{ route('checkout.submit') }}" method="POST" id="checkout-form">
             @csrf
             <div class="row g-5">

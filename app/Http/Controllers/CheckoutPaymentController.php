@@ -2,14 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Support\Facades\Auth;
-use App\Models\Order;
-use App\Models\OrderProduct;
+use App\Traits\PhpFlasher;
 use App\Helpers\ShippingHelper;
 use App\Helpers\StripeCheckout;
+use App\Models\Order;
+use App\Models\OrderProduct;
+use Illuminate\Support\Facades\Auth;
 
 class CheckoutPaymentController extends Controller
 {
+    use PhpFlasher;
+
     /**
      * Coordinates the checkout process, bridging the shopping cart,
      * the local database, and the external payment gateway.
@@ -31,7 +34,8 @@ class CheckoutPaymentController extends Controller
 
         // Prevent processing of empty carts
         if ($cart_data->isEmpty()) {
-            return redirect()->route('cart.index')->with('message', 'Your cart is empty');
+            $this->flashWarning('Your cart is empty.');
+            return redirect()->route('cart.index');
         }
 
         $cart_data->calculateSubtotal();
@@ -103,6 +107,7 @@ class CheckoutPaymentController extends Controller
             return redirect($stripe_checkout->getUrl());
         }
 
-        return redirect()->route('checkout.success', ['id' => $order->id])->with('success', 'Payment was successful during testing');
+        $this->flashSuccess('Order placed successfully!');
+        return redirect()->route('checkout.success', ['id' => $order->payment_id]);
     }
 }
