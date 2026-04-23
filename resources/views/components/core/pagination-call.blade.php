@@ -1,3 +1,4 @@
-  @if (isset($product_data) && method_exists($product_data, 'links'))
-      {{ $product_data->links('components.core.pagination-default') }}
-  @endif
+@php $paginator = $data ?? $product_data ?? null; @endphp
+@if ($paginator && method_exists($paginator, 'links'))
+    {{ $paginator->links('components.core.pagination-default') }}
+@endif

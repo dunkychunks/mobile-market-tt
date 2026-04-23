@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Product;
 use App\Traits\PhpFlasher;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class ProductController extends Controller
@@ -13,24 +14,27 @@ class ProductController extends Controller
 
     /**
      * Display a listing of the resource.
-     * This function pulls products from the Products table
-     * The information is then sent to the products page to be displayed
+     * Supports optional ?category= filter from the sidebar.
      */
-    public function index()
+    public function index(Request $request)
     {
-        //Check to see if user is logged in and which groups they belong to e.g. Amazon prime member discounts
-
         $group_ids = Auth::check() ? Auth::user()->getGroups() : [1];
 
-        //retrieves products from the Products table
-        $product_data = Product::withPrices()->paginate(6);
+        $active_category = $request->input('category', '');
 
-        // category counts for the sidebar filter
+        // apply category filter when one is selected from the sidebar
+        $query = Product::withPrices();
+        if ($active_category) {
+            $query->where('category', $active_category);
+        }
+
+        $product_data = $query->paginate(6)->appends($request->only('category'));
+
+        // category counts for the sidebar
         $categories = Product::selectRaw('category, count(*) as count')
             ->groupBy('category')
             ->pluck('count', 'category');
 
-        //pass data to the Products page to display
-        return view('pages.default.productspage', compact('product_data', 'categories'));
+        return view('pages.default.productspage', compact('product_data', 'categories', 'active_category'));
     }
 }
