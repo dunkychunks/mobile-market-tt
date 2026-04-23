@@ -13,6 +13,16 @@
         padding: 5rem 0rem;
     }
 
+    @media (max-width: 767px) {
+        .user-layout-area2 { min-height: unset; }
+        .layout-outer-left { border-radius: 5px 5px 0 0; }
+        .user-layout-left { padding: 1.5rem 0.5rem; }
+        .user-layout-right { padding: 2rem 0.5rem; }
+        .user-sidebar-list { display: flex; flex-wrap: wrap; width: 100%; padding: 0; justify-content: center; gap: 0.25rem; }
+        .user-sidebar-list li { padding: 6px 12px; }
+        .left-border { border-left: none; border-top: 1px solid rgb(49, 48, 48); }
+    }
+
 
 
     .user-layout-area2 .tier-user-profile {
@@ -144,9 +154,9 @@
                 <h4 class="user-name">{{ Auth::user()->name }}</h4> --}}
 
                 <ul class="user-sidebar-list">
-                    <li><a href="{{ route('user.profile') }}">Profile</a></li>
-                    <li><a href="{{ route('user.tiers.index') }}">My Rewards</a></li>
-                    <li><a href="{{ route('user.orders.index') }}">Order History</a></li>
+                    <li><a href="{{ route('user.profile') }}" class="{{ Request::routeIs('user.profile') ? 'fw-bold text-warning' : '' }}">Profile</a></li>
+                    <li><a href="{{ route('user.tiers.index') }}" class="{{ Request::routeIs('user.tiers.*') ? 'fw-bold text-warning' : '' }}">My Rewards</a></li>
+                    <li><a href="{{ route('user.orders.index') }}" class="{{ Request::routeIs('user.orders.*') ? 'fw-bold text-warning' : '' }}">Order History</a></li>
                 </ul>
             </div>
 

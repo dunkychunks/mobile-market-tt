@@ -20,6 +20,14 @@
     <link href="{{ asset('theme/css/bootstrap.min.css') }}" rel="stylesheet">
 
     <link href="{{ asset('theme/css/style.css') }}" rel="stylesheet">
+    <style>
+        /* prevent horizontal overflow on small screens */
+        body { overflow-x: hidden; }
+        .table-responsive-always { overflow-x: auto; }
+        @media (max-width: 576px) {
+            .page-header h1 { font-size: 1.5rem !important; }
+        }
+    </style>
 </head>
 
 <body>
@@ -43,7 +51,9 @@
         </div>
         <div class="container px-0">
             <nav class="navbar navbar-light bg-white navbar-expand-xl">
-                <a href="{{ route('home') }}" class="navbar-brand"><h1 class="text-primary display-6">Mobile Market</h1></a>
+                <a href="{{ route('home') }}" class="navbar-brand">
+                    <h1 class="text-primary mb-0" style="font-size: clamp(1.2rem, 4vw, 1.8rem);">Mobile Market</h1>
+                </a>
                 <button class="navbar-toggler py-2 px-3" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
                     <span class="fa fa-bars text-primary"></span>
                 </button>
@@ -129,6 +139,13 @@
     <main class="{{ (Route::is('home') || Route::is('home.index') || Request::is('/')) ? '' : 'mt-5 pt-5' }}">
         @yield('content')
     </main>
+
+    {{-- Product Advisor widget shown on shop and detail pages for logged-in users --}}
+    @auth
+        @if(Request::is('shop*') || Request::is('details/*') || Request::is('store*'))
+            <x-core.product-advisor />
+        @endif
+    @endauth
 
     <div class="container-fluid bg-dark text-white-50 footer pt-5 mt-5">
         <div class="container py-5">
