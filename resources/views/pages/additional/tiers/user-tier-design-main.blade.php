@@ -1,3 +1,14 @@
+{{-- tier upgrade flash --}}
+@if(session('tier_just_upgraded'))
+<div class="alert alert-primary d-flex align-items-center mb-4" role="alert">
+    <i class="fas fa-trophy fa-2x me-3 text-primary"></i>
+    <div>
+        <strong>Congratulations!</strong> You've just been upgraded to
+        <strong>{{ session('tier_just_upgraded') }}</strong>. Check out your new benefits below!
+    </div>
+</div>
+@endif
+
 {{-- page heading and intro text --}}
 <h3 class="text-primary mb-1">My Tier Status</h3>
 <p class="text-muted mb-4">Track your spending and see how close you are to the next reward tier.</p>

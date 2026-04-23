@@ -123,6 +123,15 @@
                     <p class="mb-0 text-muted">Your current balance: <strong class="text-primary">{{ Auth::user()->fresh()->points_balance }} points</strong></p>
                 </div>
 
+                {{-- tier upgrade celebration --}}
+                @if ($tier_helper->tier_upgraded > 0)
+                <div class="border border-primary rounded p-4 mb-4 text-center" style="background:linear-gradient(135deg,#f0f7ff,#e8f4e8);">
+                    <i class="fas fa-trophy fa-3x text-primary mb-3 d-block"></i>
+                    <h4 class="text-primary mb-1">Tier Upgrade!</h4>
+                    <p class="mb-0 text-muted">You've reached <strong class="text-primary">{{ Str::ucfirst($tier_helper->tier->title) }}</strong>. Enjoy your new benefits!</p>
+                </div>
+                @endif
+
                 {{-- tier status --}}
                 @if ($tier_helper->tier)
                 <div class="border border-secondary rounded p-4 mb-5">
