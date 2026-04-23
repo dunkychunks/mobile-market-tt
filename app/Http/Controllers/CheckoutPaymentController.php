@@ -80,6 +80,7 @@ class CheckoutPaymentController extends Controller
         $order->shipping_address_id = 1;
         $order->billing_address_id = 1;
         $order->payment_status = 'unpaid'; // Set initial state pending confirmation
+        $order->payment_method = 'credit_card';
         $order->save();
 
         // Database Persistence: Save individual line items mapped to the order

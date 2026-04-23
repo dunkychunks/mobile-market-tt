@@ -39,6 +39,7 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/cart/{id}', [CartController::class, 'destroy'])->name('cart.destroy');
 
     Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
+    Route::post('/checkout', [CheckoutController::class, 'submit'])->name('checkout.submit');
     Route::post('/checkout/points', [CheckoutController::class, 'points'])->name('checkout.points');
 
     // Handles the outbound redirect to the payment provider
