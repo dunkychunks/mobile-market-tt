@@ -22,13 +22,13 @@ class TierSeeder extends Seeder
             ],
             [
                 'title' => 'Tier 2',
-                'spending_range' => 2000,
+                'spending_range' => 500,
                 'group_id' => 2,
                 'created_at' => Carbon::now(),
             ],
             [
                 'title' => 'Tier 3',
-                'spending_range' => 3000,
+                'spending_range' => 1000,
                 'group_id' => 3,
                 'created_at' => Carbon::now(),
             ],
