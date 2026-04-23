@@ -42,27 +42,28 @@ class CartController extends Controller
         //Checks if user id and product id are in the db. If exists will update quantity if not will create a new record
         Cart::updateOrCreate(
             ['user_id' => Auth::id(), 'product_id' => $request->product_id],
-            ['quantity' => DB::raw('quantity + ' . $request->quantity), 'updated_at' => now()]
+            ['quantity' => DB::raw('quantity + ' . (int) $request->quantity), 'updated_at' => now()]
         );
 
-        $this->flashSuccess('Product added to cart');
+        $this->flashSuccess('Item added to cart');
 
-        return redirect()->route('cart.index')->with('message', 'Product added to the cart');
+        // stay on the current page so the user can keep browsing
+        return redirect()->back();
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Adds a single item from the shop listing page.
      */
     public function addToCartFromStore(Request $request)
     {
         Cart::updateOrCreate(
             ['user_id' => Auth::id(), 'product_id' => $request->id],
-            ['quantity' => DB::raw('quantity + ' . 1), 'updated_at' => now()]
+            ['quantity' => DB::raw('quantity + 1'), 'updated_at' => now()]
         );
 
-        $this->flashSuccess('Product added to cart');
+        $this->flashSuccess('Item added to cart');
 
-        return redirect()->route('cart.index')->with('message', 'Product added to the cart');
+        return redirect()->back();
     }
 
 
