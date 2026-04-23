@@ -33,17 +33,36 @@
                         <strong>{{ $order->order_no }}</strong>
                     </div>
                     <div class="d-flex justify-content-between mb-2">
-                        <span class="text-muted">Payment Status</span>
-                        <span class="badge bg-success">{{ ucfirst($order->payment_status) }}</span>
+                        <span class="text-muted">Payment Method</span>
+                        <strong>{{ ucwords(str_replace('_', ' ', $order->payment_method ?? 'Credit Card')) }}</strong>
                     </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-muted">Payment Status</span>
+                        @php $isPaid = $order->payment_status === 'paid'; @endphp
+                        <span class="badge {{ $isPaid ? 'bg-success' : 'bg-warning text-dark' }}">
+                            {{ ucfirst($order->payment_status) }}
+                        </span>
+                    </div>
+                    <hr class="border-secondary">
                     <div class="d-flex justify-content-between mb-2">
                         <span class="text-muted">Subtotal</span>
                         <span>${{ app('CustomHelper')->formatPrice($order->subtotal) }}</span>
                     </div>
-                    <div class="d-flex justify-content-between fw-bold">
-                        <span>Total Paid</span>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-muted">Shipping</span>
+                        <span class="text-muted">—</span>
+                    </div>
+                    <div class="d-flex justify-content-between fw-bold border-top border-secondary pt-2 mt-2">
+                        <span>Total {{ $isPaid ? 'Paid' : 'Due' }}</span>
                         <span class="text-primary">${{ app('CustomHelper')->formatPrice($order->total) }}</span>
                     </div>
+
+                    @if(!$isPaid)
+                        <div class="alert alert-info mt-3 mb-0 small">
+                            <i class="fas fa-info-circle me-1"></i>
+                            Your order is confirmed. Payment is pending — please follow the instructions for your chosen payment method.
+                        </div>
+                    @endif
                 </div>
 
                 {{-- items ordered --}}

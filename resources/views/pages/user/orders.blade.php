@@ -27,18 +27,20 @@
         </div>
     @else
         @foreach($orders as $order)
+            @php $isPaid = $order->payment_status === 'paid'; @endphp
             <div class="border border-secondary rounded p-4 mb-3">
-                <div class="d-flex justify-content-between align-items-start mb-2">
+                {{-- order header --}}
+                <div class="d-flex justify-content-between align-items-start mb-3">
                     <div>
                         <h6 class="mb-1 text-primary">Order #{{ $order->order_no }}</h6>
                         <small class="text-muted">{{ $order->created_at->format('d M Y, g:i A') }}</small>
                     </div>
-                    <span class="badge {{ $order->payment_status === 'paid' ? 'bg-success' : 'bg-warning text-dark' }}">
+                    <span class="badge {{ $isPaid ? 'bg-success' : 'bg-warning text-dark' }}">
                         {{ ucfirst($order->payment_status) }}
                     </span>
                 </div>
 
-                {{-- items in this order --}}
+                {{-- items --}}
                 @foreach($order->products as $product)
                     <div class="d-flex align-items-center py-2 border-top">
                         <img src="{{ $product->getImage() }}" class="rounded-circle me-3" style="width:40px;height:40px;object-fit:cover;" alt="">
@@ -50,9 +52,20 @@
                     </div>
                 @endforeach
 
-                <div class="d-flex justify-content-between mt-2 pt-2 border-top fw-bold">
-                    <span>Total</span>
-                    <span class="text-primary">${{ app('CustomHelper')->formatPrice($order->total) }}</span>
+                {{-- full financial breakdown --}}
+                <div class="mt-3 pt-2 border-top">
+                    <div class="d-flex justify-content-between mb-1">
+                        <span class="text-muted small">Subtotal</span>
+                        <span class="small">${{ app('CustomHelper')->formatPrice($order->subtotal) }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-1">
+                        <span class="text-muted small">Payment Method</span>
+                        <span class="small">{{ ucwords(str_replace('_', ' ', $order->payment_method ?? 'Credit Card')) }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between fw-bold border-top border-secondary pt-2 mt-1">
+                        <span>Total {{ $isPaid ? 'Paid' : 'Due' }}</span>
+                        <span class="text-primary">${{ app('CustomHelper')->formatPrice($order->total) }}</span>
+                    </div>
                 </div>
             </div>
         @endforeach

@@ -21,15 +21,24 @@ class OrdersTable
                     ->label('Customer')
                     ->searchable()
                     ->sortable(),
-                TextColumn::make('total')
+                TextColumn::make('subtotal')
                     ->money('usd')
+                    ->sortable(),
+                TextColumn::make('total')
+                    ->label('Total')
+                    ->money('usd')
+                    ->sortable(),
+                TextColumn::make('payment_method')
+                    ->label('Method')
+                    ->formatStateUsing(fn ($state) => ucwords(str_replace('_', ' ', $state ?? 'N/A')))
                     ->sortable(),
                 TextColumn::make('payment_status')
                     ->badge()
                     ->color(fn (string $state): string => match($state) {
-                        'paid'   => 'success',
-                        'unpaid' => 'warning',
-                        default  => 'gray',
+                        'paid'    => 'success',
+                        'unpaid'  => 'warning',
+                        'pending' => 'info',
+                        default   => 'gray',
                     })
                     ->sortable(),
                 TextColumn::make('created_at')
