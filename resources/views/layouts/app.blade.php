@@ -27,6 +27,12 @@
         @media (max-width: 576px) {
             .page-header h1 { font-size: 1.5rem !important; }
         }
+        /*
+         * The Fruitables theme sets .pagination { display: inline-block; } which
+         * collapses Bootstrap's flex layout and causes page buttons to stack vertically.
+         * This overrides it to restore the expected horizontal row.
+         */
+        ul.pagination { display: flex !important; flex-direction: row; flex-wrap: wrap; }
     </style>
 </head>
 
