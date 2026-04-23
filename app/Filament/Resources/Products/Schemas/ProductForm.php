@@ -2,11 +2,14 @@
 
 namespace App\Filament\Resources\Products\Schemas;
 
-use Filament\Schemas\Schema;
+use App\Models\Group;
+use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\FileUpload;
+use Filament\Schemas\Schema;
 
 class ProductForm
 {
@@ -47,6 +50,33 @@ class ProductForm
                 TextInput::make('status')
                     ->required()
                     ->default('active'),
+                /*
+                 * Group Prices section allows the admin to set tier-specific discounted
+                 * prices per product. When a shopper belongs to a group that has an
+                 * override here, Product::getPrice() returns that price instead of the
+                 * base price (via the COALESCE subquery in scopeWithPrices).
+                 */
+                Section::make('Group Prices (optional)')
+                    ->description('Override the base price for specific customer groups.')
+                    ->schema([
+                        Repeater::make('groupPrices')
+                            ->relationship()
+                            ->schema([
+                                Select::make('group_id')
+                                    ->label('Group')
+                                    ->options(fn () => Group::pluck('title', 'id'))
+                                    ->required(),
+                                TextInput::make('price')
+                                    ->label('Discounted Price')
+                                    ->numeric()
+                                    ->prefix('$')
+                                    ->required(),
+                            ])
+                            ->columns(2)
+                            ->addActionLabel('Add group price'),
+                    ])
+                    ->columnSpanFull()
+                    ->collapsible(),
             ]);
     }
 }

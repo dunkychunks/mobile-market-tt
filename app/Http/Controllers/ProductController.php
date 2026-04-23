@@ -23,7 +23,7 @@ class ProductController extends Controller
         $active_category = $request->input('category', '');
 
         // apply category filter when one is selected from the sidebar
-        $query = Product::withPrices();
+        $query = Product::withPrices($group_ids);
         if ($active_category) {
             $query->where('category', $active_category);
         }

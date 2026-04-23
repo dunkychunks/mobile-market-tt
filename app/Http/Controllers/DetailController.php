@@ -16,7 +16,7 @@ class DetailController extends Controller
 
         //get a product based on the id provided
 
-        $data = Product::singleProduct($id)->get()->first();
+        $data = Product::withPrices($group_ids)->singleProduct($id)->get()->first();
 
         return view('pages.default.detailspage', compact('data'));
     }

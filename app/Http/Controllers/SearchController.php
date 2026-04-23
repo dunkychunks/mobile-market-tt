@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Product;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class SearchController extends Controller
 {
@@ -12,7 +13,8 @@ class SearchController extends Controller
         $q = $request->input('q', '');
         $category = $request->input('category', '');
 
-        $query = Product::withPrices();
+        $group_ids = Auth::check() ? Auth::user()->getGroups() : [1];
+        $query = Product::withPrices($group_ids);
 
         if ($q) {
             // search title and short description

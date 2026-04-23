@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Product extends Model
 {
@@ -29,14 +30,38 @@ class Product extends Model
      *  =============== RELATIONSHIPS  ===============
      */
 
+    public function groupPrices(): HasMany
+    {
+        return $this->hasMany(ProductGroupPrice::class);
+    }
 
     /**
      *  =============== SCOPES  ===============
      */
 
+    /*
+     * scopeWithPrices LEFT JOINs the product_group_prices table for the user's
+     * price group(s). The COALESCE picks the group-specific price when one exists,
+     * falling back to the base product price for users with no special group or
+     * products with no override set.
+     *
+     * Controllers call:  Product::withPrices($user->getGroups())->...
+     * Product::getPrice() then returns $this->effective_price ?? $this->price.
+     */
     public function scopeWithPrices(Builder $query, array $group_ids = [1])
     {
-        $query->where('products.id', '>', 0);
+        // Use the first group ID (users currently belong to one group via their tier)
+        $group_id = $group_ids[0] ?? 1;
+
+        $query->addSelect([
+            'products.*',
+            \DB::raw("COALESCE(
+                (SELECT pgp.price FROM product_group_prices pgp
+                 WHERE pgp.product_id = products.id AND pgp.group_id = {$group_id}
+                 LIMIT 1),
+                products.price
+            ) as effective_price"),
+        ]);
     }
 
     public function scopeSingleProduct(Builder $query, int $id)
@@ -56,9 +81,14 @@ class Product extends Model
     }
 
 
+    /*
+     * Returns the effective price for the current user's group.
+     * effective_price is populated by scopeWithPrices via a subquery COALESCE.
+     * Falls back to the base price when no group override is set.
+     */
     public function getPrice()
     {
-        return $this->price;
+        return $this->effective_price ?? $this->price;
     }
 
     public function getStockPrice()
