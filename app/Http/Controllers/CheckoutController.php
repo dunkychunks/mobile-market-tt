@@ -84,12 +84,9 @@ class CheckoutController extends Controller
 
         $cart_data->calculateSubtotal();
 
-        // payment_status depends on method - bank transfer is treated as confirmed for demo
         $status = match($method) {
-            'bank_transfer'    => 'paid',
-            'cheque'           => 'pending',
-            'cash_on_delivery' => 'pending',
-            default            => 'pending',
+            'credit_card' => 'paid',
+            default       => 'pending',
         };
 
         $order = new Order();

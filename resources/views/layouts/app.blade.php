@@ -244,7 +244,6 @@
     <script src="{{ asset('theme/lib/owlcarousel/owl.carousel.min.js') }}"></script>
 
     <script src="{{ asset('theme/js/main.js') }}"></script>
-    @flasher_render
 </body>
 
 </html>

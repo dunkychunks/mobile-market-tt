@@ -4,7 +4,9 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Traits\PhpFlasher;
 use Illuminate\Foundation\Auth\RegistersUsers;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
@@ -21,7 +23,7 @@ class RegisterController extends Controller
     |
     */
 
-    use RegistersUsers;
+    use RegistersUsers, PhpFlasher;
 
     /**
      * Where to redirect users after registration.
@@ -72,5 +74,10 @@ class RegisterController extends Controller
             'tier_id' => 1,
             'points_balance' => 0,
         ]);
+    }
+
+    protected function registered(Request $request, $user)
+    {
+        $this->flashSuccess('Welcome to Mobile Market TT, ' . $user->name . '!');
     }
 }
