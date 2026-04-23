@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\tiers;
+namespace App\Http\Controllers\Tiers;
 
 use App\Helpers\TierHelper;
 use App\Http\Controllers\Controller;

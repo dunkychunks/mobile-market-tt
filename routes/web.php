@@ -11,7 +11,7 @@ use App\Http\Controllers\CheckoutSuccessController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\StaticController;
 use App\Http\Controllers\UserController;
-use App\Http\Controllers\tiers\TierController;
+use App\Http\Controllers\Tiers\TierController;
 
 Auth::routes();
 
