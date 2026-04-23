@@ -100,21 +100,55 @@
                         @endforeach
                     </div>
 
+                    {{--
+                        Points Redemption Rules (viva talking point):
+                          100 pts = $1 | Min 500 pts | Max 50% of subtotal
+                        Server-side validation mirrors these rules in CheckoutController::submit().
+                    --}}
+                    @if($pointsBalance >= 500)
+                    <div class="border border-secondary rounded p-3 mb-4">
+                        <h5 class="text-primary mb-2">
+                            <i class="fas fa-star me-2 text-secondary"></i>Redeem Loyalty Points
+                        </h5>
+                        <p class="text-muted small mb-2">
+                            Balance: <strong class="text-primary">{{ number_format($pointsBalance) }} pts</strong>
+                            &mdash; 100 pts = $1 off &mdash; min 500 pts &mdash; max 50% of subtotal
+                        </p>
+                        <div class="input-group input-group-sm">
+                            <input type="number" name="points_to_redeem" id="points_to_redeem"
+                                   class="form-control" min="0" step="100"
+                                   placeholder="e.g. 500"
+                                   value="{{ old('points_to_redeem', 0) }}"
+                                   max="{{ $pointsBalance }}">
+                            <span class="input-group-text">pts</span>
+                            <span class="input-group-text text-primary fw-semibold" id="pts-discount">= $0.00 off</span>
+                        </div>
+                    </div>
+                    @else
+                    <input type="hidden" name="points_to_redeem" value="0">
+                    @endif
+
                     {{-- shipping method --}}
+                    @php $isTier3 = Auth::user()->load('tier')->tier?->title === 'Tier 3'; @endphp
                     <div class="border border-secondary rounded p-3 mb-4">
                         <h5 class="text-primary mb-3">Shipping Method</h5>
                         @foreach($shippings as $shipping)
+                        @php $isFreeExpress = (float) $shipping->price === 0.0; @endphp
                         <div class="form-check mb-2">
                             <input class="form-check-input shipping-radio" type="radio"
                                    name="shipping_id" id="ship_{{ $shipping->id }}"
                                    value="{{ $shipping->id }}"
                                    data-price="{{ $shipping->price }}"
+                                   data-tier3-only="{{ $isFreeExpress ? '1' : '0' }}"
                                    {{ old('shipping_id', '') == $shipping->id ? 'checked' : ($loop->first && !old('shipping_id') ? 'checked' : '') }}>
                             <label class="form-check-label" for="ship_{{ $shipping->id }}">
                                 <span class="fw-semibold">{{ $shipping->title }}</span>
                                 <span class="text-muted ms-2">
                                     {{ $shipping->price > 0 ? '$'.number_format($shipping->price, 2) : 'Free' }}
                                 </span>
+                                @if($isFreeExpress && !$isTier3)
+                                    <span class="badge bg-secondary ms-1" style="font-size:0.65rem;">Tier 3</span>
+                                @endif
                             </label>
                         </div>
                         @endforeach
@@ -133,6 +167,12 @@
                             <span class="text-muted">Shipping</span>
                             <span id="shipping-display" class="fw-semibold">—</span>
                         </div>
+                        @if($pointsBalance >= 500)
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-muted">Points Discount</span>
+                            <span id="points-discount-display" class="text-success fw-semibold">—</span>
+                        </div>
+                        @endif
                         <div class="d-flex justify-content-between fw-bold border-top border-secondary pt-2">
                             <span>Estimated Total</span>
                             <span class="text-primary" id="total-display">${{ app('CustomHelper')->formatPrice($cart_data->getSubtotal()) }}</span>
@@ -211,24 +251,52 @@
 @push('scripts')
 <script>
     (function () {
-        const subtotal = {{ $cart_data->getSubtotal() }};
-        const radios   = document.querySelectorAll('.shipping-radio');
-        const shipEl   = document.getElementById('shipping-display');
-        const totalEl  = document.getElementById('total-display');
+        const subtotal   = {{ $cart_data->getSubtotal() }};
+        const isTier3    = {{ $isTier3 ? 'true' : 'false' }};
+        const radios     = document.querySelectorAll('.shipping-radio');
+        const shipEl     = document.getElementById('shipping-display');
+        const totalEl    = document.getElementById('total-display');
+        const ptsInput    = document.getElementById('points_to_redeem');
+        const ptsDisplay  = document.getElementById('pts-discount');
+        const ptsDscLine  = document.getElementById('points-discount-display');
 
         function fmt(n) {
             return '$' + parseFloat(n).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
         }
 
+        function getPointsDiscount() {
+            if (!ptsInput) return 0;
+            const pts = parseInt(ptsInput.value, 10) || 0;
+            return pts >= 500 ? pts / 100 : 0;
+        }
+
         function update() {
             const checked = document.querySelector('.shipping-radio:checked');
             if (!checked) return;
-            const price = parseFloat(checked.dataset.price) || 0;
-            shipEl.textContent  = price > 0 ? fmt(price) : 'Free';
-            totalEl.textContent = fmt(subtotal + price);
+
+            if (!isTier3 && checked.dataset.tier3Only === '1') {
+                radios[0].checked = true;
+                alert('Free Express Shipping is a Tier 3 benefit. Spend $1,000 to unlock.');
+                update();
+                return;
+            }
+
+            const shipPrice = parseFloat(checked.dataset.price) || 0;
+            const ptsDsc    = getPointsDiscount();
+
+            shipEl.textContent  = shipPrice > 0 ? fmt(shipPrice) : 'Free';
+            totalEl.textContent = fmt(Math.max(0, subtotal + shipPrice - ptsDsc));
+
+            if (ptsDisplay) {
+                ptsDisplay.textContent = ptsDsc > 0 ? '= ' + fmt(ptsDsc) + ' off' : '= $0.00 off';
+            }
+            if (ptsDscLine) {
+                ptsDscLine.textContent = ptsDsc > 0 ? '−' + fmt(ptsDsc) : '—';
+            }
         }
 
         radios.forEach(r => r.addEventListener('change', update));
+        if (ptsInput) ptsInput.addEventListener('input', update);
         update();
     })();
 </script>

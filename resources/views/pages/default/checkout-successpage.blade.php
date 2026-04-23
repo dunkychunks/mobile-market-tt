@@ -56,6 +56,12 @@
                             <span class="text-muted">—</span>
                         @endif
                     </div>
+                    @if($order->points_redeemed > 0)
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-muted">Points Discount</span>
+                        <span class="text-success fw-semibold">−${{ number_format($order->points_redeemed / 100, 2) }} ({{ number_format($order->points_redeemed) }} pts)</span>
+                    </div>
+                    @endif
                     <div class="d-flex justify-content-between fw-bold border-top border-secondary pt-2 mt-2">
                         <span>Total {{ $isPaid ? 'Paid' : 'Due' }}</span>
                         <span class="text-primary">${{ app('CustomHelper')->formatPrice($order->total) }}</span>

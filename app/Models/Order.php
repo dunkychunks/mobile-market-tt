@@ -19,6 +19,7 @@ class Order extends Model
         'order_no',
         'subtotal',
         'total',
+        'points_redeemed',
         'payment_provider',
         'payment_id',
         'shipping_id',

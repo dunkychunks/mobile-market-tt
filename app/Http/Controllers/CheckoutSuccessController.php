@@ -37,7 +37,10 @@ class CheckoutSuccessController extends Controller
             // fire the OrderPaid event (handles tier auto-upgrade)
             OrderPaid::dispatch($order);
 
-            // award 10 points per dollar spent
+            // Deduct any points that were redeemed at checkout, then award 10 pts per $1
+            if ($order->points_redeemed > 0) {
+                $order->user->decrement('points_balance', $order->points_redeemed);
+            }
             $pointsAwarded = (int)($order->total * 10);
             $order->user->increment('points_balance', $pointsAwarded);
         }

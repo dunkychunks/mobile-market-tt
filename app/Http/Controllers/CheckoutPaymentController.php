@@ -82,6 +82,13 @@ class CheckoutPaymentController extends Controller
         $order->payment_provider = $insert_data['payment_provider'];
         $order->payment_id = $insert_data['payment_id']; // The 'cs_test_...' string
         $order->shipping_id = Session::pull('checkout_shipping_id', 1);
+
+        $pointsToRedeem         = (int) Session::pull('checkout_points_to_redeem', 0);
+        $order->points_redeemed = $pointsToRedeem;
+        if ($pointsToRedeem > 0) {
+            $pointsDiscount = $pointsToRedeem / 100;
+            $order->total   = max(0, $order->total - $pointsDiscount);
+        }
         $order->shipping_address_id = 1;
         $order->billing_address_id = 1;
         $order->payment_status = 'unpaid'; // Set initial state pending confirmation
